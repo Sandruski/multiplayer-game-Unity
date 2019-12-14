@@ -1,5 +1,0 @@
-sceneSetups:
-- path: C:/Users/disob/Desktop/2d-gamedemo-robodash-master/Assets/Scenes/main.unity
-  isLoaded: 1
-  isActive: 1
-  isSubScene: 0

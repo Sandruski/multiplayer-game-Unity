@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Networking;
 
+#pragma warning disable CS0618
 public class MsgTypes
 {
     public const short PlayerPrefabSelect = MsgType.Highest + 1;
