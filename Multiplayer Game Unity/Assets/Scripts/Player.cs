@@ -11,8 +11,7 @@ public class Player : MonoBehaviour
     uint maxBombs = 1;
     [SerializeField]
     uint maxConcurrentBombs = 1;
-    [SerializeField]
-    uint sizeBombs = 1;
+    public uint sizeBombs = 1;
     [SerializeField]
     float speed = 1.0f;
     #endregion

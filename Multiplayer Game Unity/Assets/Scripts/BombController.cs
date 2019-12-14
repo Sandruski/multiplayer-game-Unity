@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 public class BombController : MonoBehaviour
 {
+    public float secondsToExplode;
     [HideInInspector]
     public bool isAlive;
     [HideInInspector]
@@ -10,17 +11,26 @@ public class BombController : MonoBehaviour
 
     Player owner;
     GridManager gridManager;
+    float timer;
 
     void Awake()
     {
         isAlive = false;
         collider2D = GetComponent<Collider2D>();
-        gridManager = GameObject.Find("GridManager").GetComponent<GridManager>();
+        gridManager = GameObject.Find("GridManager").GetComponent<GridManager>();      
     }
 
     void Update()
     {
-        
+        if (isAlive)
+        {
+            timer += Time.deltaTime;
+
+            if (timer >= secondsToExplode)
+            {
+                Despawn();
+            }
+        }
     }
 
     public void SetOwner(Player owner)
@@ -38,12 +48,15 @@ public class BombController : MonoBehaviour
         }
 
         isAlive = true;
+        timer = 0.0f;
         owner.concurrentBombs += 1;
         gameObject.SetActive(true);
     }
 
     public void Despawn()
     {
+        gridManager.SpawnExplosions(owner, transform.position);
+
         isAlive = false;
         owner.concurrentBombs -= 1;
         gameObject.SetActive(false);

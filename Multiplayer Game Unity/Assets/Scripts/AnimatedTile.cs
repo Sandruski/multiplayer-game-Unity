@@ -19,15 +19,9 @@ namespace UnityEngine.Tilemaps
         /// </summary>
         public Sprite[] m_AnimatedSprites;
         /// <summary>
-        /// The minimum possible speed at which the Animation of the Tile will be played.
-        /// A speed value will be randomly chosen between the minimum and maximum speed.
+        /// The speed at which the Animation of the Tile will be played.
         /// </summary>
-        public float m_MinSpeed = 1f;
-        /// <summary>
-        /// The maximum possible speed at which the Animation of the Tile will be played.
-        /// A speed value will be randomly chosen between the minimum and maximum speed.
-        /// </summary>
-        public float m_MaxSpeed = 1f;
+        public float m_Speed = 1f;
         /// <summary>
         /// The starting time of this Animated Tile.
         /// This allows you to start the Animation from a particular Sprite in the list of Animated Sprites.
@@ -67,7 +61,7 @@ namespace UnityEngine.Tilemaps
             if (m_AnimatedSprites.Length > 0)
             {
                 tileAnimationData.animatedSprites = m_AnimatedSprites;
-                tileAnimationData.animationSpeed = Random.Range(m_MinSpeed, m_MaxSpeed);
+                tileAnimationData.animationSpeed = m_Speed;
                 tileAnimationData.animationStartTime = m_AnimationStartTime;
                 return true;
             }
@@ -104,19 +98,11 @@ namespace UnityEngine.Tilemaps
                 tile.m_AnimatedSprites[i] = (Sprite)EditorGUILayout.ObjectField("Sprite " + (i + 1), tile.m_AnimatedSprites[i], typeof(Sprite), false, null);
             }
 
-            float minSpeed = EditorGUILayout.FloatField("Minimum Speed", tile.m_MinSpeed);
-            float maxSpeed = EditorGUILayout.FloatField("Maximum Speed", tile.m_MaxSpeed);
-            if (minSpeed < 0.0f)
-                minSpeed = 0.0f;
+            float speed = EditorGUILayout.FloatField("Speed", tile.m_Speed);
+            if (speed < 0.0f)
+                speed = 0.0f;
 
-            if (maxSpeed < 0.0f)
-                maxSpeed = 0.0f;
-
-            if (maxSpeed < minSpeed)
-                maxSpeed = minSpeed;
-
-            tile.m_MinSpeed = minSpeed;
-            tile.m_MaxSpeed = maxSpeed;
+            tile.m_Speed = speed;
 
             tile.m_AnimationStartTime = EditorGUILayout.FloatField("Start Time", tile.m_AnimationStartTime);
             tile.m_TileColliderType = (Tile.ColliderType)EditorGUILayout.EnumPopup("Collider Type", tile.m_TileColliderType);

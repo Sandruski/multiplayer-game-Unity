@@ -117,6 +117,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2164de558209c9d4eaf760c856672c9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  secondsToExplode: 2.5
   isAlive: 0
   collider2D: {fileID: 0}
 --- !u!95 &3814133698170422943
