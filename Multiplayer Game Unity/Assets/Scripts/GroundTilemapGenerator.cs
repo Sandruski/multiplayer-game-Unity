@@ -47,18 +47,18 @@ public class GroundTilemapGenerator : MonoBehaviour
                 if (!collidableGroundTilemap.HasTile(position))
                 {
                     bool isSpawnTile =
-                        position == topLeftSpawnTile ||
-                        position == topRightSpawnTile ||
-                        position == bottomLeftSpawnTile ||
-                        position == bottomRightSpawnTile ||
-                        position == topLeftSpawnTileBottomTile ||
-                        position == topLeftSpawnTileRightTile ||
-                        position == topRightSpawnTileBottomTile ||
-                        position == topRightSpawnTileLeftTile ||
-                        position == bottomLeftSpawnTileTopTile ||
-                        position == bottomLeftSpawnTileRightTile ||
-                        position == bottomRightSpawnTileTopTile ||
-                        position == bottomRightSpawnTileLeftTile;
+                        position == topLeftSpawnTile 
+                        || position == topRightSpawnTile
+                        || position == bottomLeftSpawnTile
+                        || position == bottomRightSpawnTile
+                        || position == topLeftSpawnTileBottomTile
+                        || position == topLeftSpawnTileRightTile
+                        || position == topRightSpawnTileBottomTile
+                        || position == topRightSpawnTileLeftTile
+                        || position == bottomLeftSpawnTileTopTile
+                        || position == bottomLeftSpawnTileRightTile
+                        || position == bottomRightSpawnTileTopTile
+                        || position == bottomRightSpawnTileLeftTile;
                     if (!isSpawnTile && Random.value <= bricksProbability)
                     {
                         collidableGroundTilemap.SetTile(position, bricks);
@@ -74,11 +74,5 @@ public class GroundTilemapGenerator : MonoBehaviour
                 }
             }
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
