@@ -101,6 +101,7 @@ public class PlayerController : NetworkBehaviour
 
     void setAnimation(string animName)
     {
+        OnSetAnimation(animName);
         CmdSetAnimation(animName);
     }
 
