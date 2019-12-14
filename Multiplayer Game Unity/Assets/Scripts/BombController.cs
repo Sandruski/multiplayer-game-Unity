@@ -22,15 +22,17 @@ public class BombController : MonoBehaviour
         this.owner = owner;
     }
 
-    public void GetSpawned()
+    public void Spawn()
     {
         isAlive = true;
+        owner.concurrentBombs += 1;
         gameObject.SetActive(true);
     }
 
     public void Despawn()
     {
         isAlive = false;
+        owner.concurrentBombs -= 1;
         gameObject.SetActive(false);
     }
 }
