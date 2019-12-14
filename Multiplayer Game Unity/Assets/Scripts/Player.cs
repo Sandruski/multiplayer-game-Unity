@@ -14,6 +14,8 @@ public class Player : MonoBehaviour
     public uint sizeBombs = 1;
     [SerializeField]
     float speed = 1.0f;
+    [SerializeField]
+    float animSpeed = 0.25f;
     #endregion
 
     #region NoInspector
@@ -21,6 +23,7 @@ public class Player : MonoBehaviour
     [HideInInspector]
     public uint concurrentBombs = 0u;
     Rigidbody2D rb;
+    Animator animator;
     bool up, down, left, right;
     #endregion
 
@@ -43,26 +46,29 @@ public class Player : MonoBehaviour
         }
 
         rb = gameObject.GetComponent<Rigidbody2D>();
+        animator = gameObject.GetComponent<Animator>();
+        animator.SetFloat("Speed", animSpeed);
     }
 
     void Update()
     {
-        if (Input.GetKey("up"))
-        {
-            up = true;
-        }
-        if (Input.GetKey("down"))
-        {
-            down = true;
-        }
-        if (Input.GetKey("left"))
-        {
-            left = true;
-        }
-        if (Input.GetKey("right"))
-        {
-            right = true;
-        }
+        if (Input.GetKeyDown("up")) { up = true; }
+        else if (Input.GetKeyUp("up")) { up = false; }
+
+        if (Input.GetKeyDown("down")){  down = true; }
+        else if (Input.GetKeyUp("down")) { down = false; }
+
+        if (Input.GetKeyDown("left")) { left = true; }
+        else if (Input.GetKeyUp("left")) { left = false; }
+
+        if (Input.GetKeyDown("right")) { right = true; }
+        else if (Input.GetKeyUp("right")) { right = false; }
+
+        animator.SetBool("Down", down);
+        animator.SetBool("Left", left);
+        animator.SetBool("Right", right);
+        animator.SetBool("Up", up);
+
         if (Input.GetKeyDown("space"))
         {
             if (concurrentBombs < maxConcurrentBombs)
@@ -78,22 +84,18 @@ public class Player : MonoBehaviour
         if (up)
         {
             velocity.y += speed;
-            up = false;
         }
         if (down)
         {
             velocity.y -= speed;
-            down = false;
         }
         if (left)
         {
             velocity.x -= speed;
-            left = false;
         }
         if (right)
         {
             velocity.x += speed;
-            right = false;
         }
         rb.velocity = velocity;
     }
