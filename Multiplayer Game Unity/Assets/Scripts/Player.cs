@@ -15,6 +15,8 @@ public class Player : MonoBehaviour
     uint sizeBombs = 1;
     [SerializeField]
     float speed = 1.0f;
+    [SerializeField]
+    float animSpeed = 0.25f;
     #endregion
 
     #region NoInspector
@@ -22,6 +24,7 @@ public class Player : MonoBehaviour
     [HideInInspector]
     public uint concurrentBombs = 0u;
     Rigidbody2D rb;
+    Animator animator;
     #endregion
 
     void Start()
@@ -43,28 +46,65 @@ public class Player : MonoBehaviour
         }
 
         rb = gameObject.GetComponent<Rigidbody2D>();
+        animator = gameObject.GetComponent<Animator>();
+        animator.SetFloat("Speed", animSpeed);
     }
 
     void FixedUpdate()
     {
         Vector2 velocity = Vector2.zero;
-        if (Input.GetKey("up"))
+        if (Input.GetKeyDown("up"))
         {
             velocity.y += speed;
+            animator.SetBool("Down", false);
+            animator.SetBool("Left", false);
+            animator.SetBool("Right", false);
+            animator.SetBool("Up", true);
         }
-        if (Input.GetKey("down"))
+        else if (Input.GetKeyUp("up"))
+        {
+            animator.SetBool("Up", false);
+        }
+
+        if (Input.GetKeyDown("down"))
         {
             velocity.y -= speed;
+            animator.SetBool("Up", false);
+            animator.SetBool("Left", false);
+            animator.SetBool("Right", false);
+            animator.SetBool("Down", true);
         }
-        if (Input.GetKey("left"))
+        else if (Input.GetKeyUp("down"))
+        {
+            animator.SetBool("Down", false);
+        }
+
+        if (Input.GetKeyDown("left"))
         {
             velocity.x -= speed;
+            animator.SetBool("Up", false);
+            animator.SetBool("Down", false);
+            animator.SetBool("Right", false);
+            animator.SetBool("Left", true);
         }
-        if (Input.GetKey("right"))
+        else if (Input.GetKeyUp("left"))
+        {
+            animator.SetBool("Left", false);
+        }
+
+        if (Input.GetKeyDown("right"))
         {
             velocity.x += speed;
+            animator.SetBool("Up", false);
+            animator.SetBool("Down", false);
+            animator.SetBool("Left", false);
+            animator.SetBool("Right", true);
         }
-       rb.velocity = velocity;
+        else if (Input.GetKeyUp("left"))
+        {
+            animator.SetBool("Right", false);
+        }
+        rb.velocity = velocity;
 
         if (Input.GetKeyDown("space"))
         {
