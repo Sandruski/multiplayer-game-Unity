@@ -25,6 +25,7 @@ public class Player : MonoBehaviour
     public uint concurrentBombs = 0u;
     Rigidbody2D rb;
     Animator animator;
+    bool up, down, left, right;
     #endregion
 
     void Start()
@@ -50,61 +51,24 @@ public class Player : MonoBehaviour
         animator.SetFloat("Speed", animSpeed);
     }
 
-    void FixedUpdate()
+    void Update()
     {
-        Vector2 velocity = Vector2.zero;
-        if (Input.GetKeyDown("up"))
-        {
-            velocity.y += speed;
-            animator.SetBool("Down", false);
-            animator.SetBool("Left", false);
-            animator.SetBool("Right", false);
-            animator.SetBool("Up", true);
-        }
-        else if (Input.GetKeyUp("up"))
-        {
-            animator.SetBool("Up", false);
-        }
+        if (Input.GetKeyDown("up")) { up = true; }
+        else if (Input.GetKeyUp("up")) { up = false; }
 
-        if (Input.GetKeyDown("down"))
-        {
-            velocity.y -= speed;
-            animator.SetBool("Up", false);
-            animator.SetBool("Left", false);
-            animator.SetBool("Right", false);
-            animator.SetBool("Down", true);
-        }
-        else if (Input.GetKeyUp("down"))
-        {
-            animator.SetBool("Down", false);
-        }
+        if (Input.GetKeyDown("down")){  down = true; }
+        else if (Input.GetKeyUp("down")) { down = false; }
 
-        if (Input.GetKeyDown("left"))
-        {
-            velocity.x -= speed;
-            animator.SetBool("Up", false);
-            animator.SetBool("Down", false);
-            animator.SetBool("Right", false);
-            animator.SetBool("Left", true);
-        }
-        else if (Input.GetKeyUp("left"))
-        {
-            animator.SetBool("Left", false);
-        }
+        if (Input.GetKeyDown("left")) { left = true; }
+        else if (Input.GetKeyUp("left")) { left = false; }
 
-        if (Input.GetKeyDown("right"))
-        {
-            velocity.x += speed;
-            animator.SetBool("Up", false);
-            animator.SetBool("Down", false);
-            animator.SetBool("Left", false);
-            animator.SetBool("Right", true);
-        }
-        else if (Input.GetKeyUp("left"))
-        {
-            animator.SetBool("Right", false);
-        }
-        rb.velocity = velocity;
+        if (Input.GetKeyDown("right")) { right = true; }
+        else if (Input.GetKeyUp("right")) { right = false; }
+
+        animator.SetBool("Down", down);
+        animator.SetBool("Left", left);
+        animator.SetBool("Right", right);
+        animator.SetBool("Up", up);
 
         if (Input.GetKeyDown("space"))
         {
@@ -113,6 +77,28 @@ public class Player : MonoBehaviour
                 SpawnBomb();
             }
         }
+    }
+
+    void FixedUpdate()
+    {
+        Vector2 velocity = Vector2.zero;
+        if (up)
+        {
+            velocity.y += speed;
+        }
+        if (down)
+        {
+            velocity.y -= speed;
+        }
+        if (left)
+        {
+            velocity.x -= speed;
+        }
+        if (right)
+        {
+            velocity.x += speed;
+        }
+        rb.velocity = velocity;
     }
 
     bool SpawnBomb()

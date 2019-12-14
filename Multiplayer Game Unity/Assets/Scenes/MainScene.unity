@@ -287,6 +287,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 89404b2fcc562ee4e89bbea0547a1d30, type: 3}
+--- !u!1 &136752985 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7845969069421166905, guid: 72558042ef969504d8a9a2e1f572f1ba,
+    type: 3}
+  m_PrefabInstance: {fileID: 7845969070636185873}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &411118810
 GameObject:
   m_ObjectHideFlags: 0
@@ -486,7 +492,7 @@ GameObject:
   - component: {fileID: 867098503}
   - component: {fileID: 867098502}
   m_Layer: 0
-  m_Name: TilemapManager
+  m_Name: GridManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -504,9 +510,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c652eebed9e50e49a2662ee406e6646, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  players:
+  - {fileID: 136752985}
+  - {fileID: 1628177319}
   collidableGroundTilemap: {fileID: 1184347712}
   nonCollidableGroundTilemap: {fileID: 1790288564}
   bricks: {fileID: 11400000, guid: c72f9bea9749d6d4c91ae22319222284, type: 2}
+  explodingBricks: {fileID: 11400000, guid: 59451099afc361f4f9a855c00cc81cf6, type: 2}
   grass: {fileID: 11400000, guid: 114370fa761c5de42a6892cb6aeb73d5, type: 2}
   grassWithShadow: {fileID: 11400000, guid: 3e56064365c81e84991381d5b03911fa, type: 2}
   width: 17
@@ -1800,7 +1810,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1379246752}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4394a3eef724546f896557197e2d6c44, type: 3}
   m_Name: 
@@ -1990,6 +2000,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 89404b2fcc562ee4e89bbea0547a1d30, type: 3}
+--- !u!1 &1628177319 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8408409805508531211, guid: 3f7f3e300e0f0bd46b594ea33b59fe70,
+    type: 3}
+  m_PrefabInstance: {fileID: 8408409805003119902}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1657775691
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2441,6 +2457,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7845969069421166909, guid: 72558042ef969504d8a9a2e1f572f1ba,
+        type: 3}
+      propertyPath: gridManager
+      value: 
+      objectReference: {fileID: 867098502}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 72558042ef969504d8a9a2e1f572f1ba, type: 3}
 --- !u!1001 &8408409805003119902

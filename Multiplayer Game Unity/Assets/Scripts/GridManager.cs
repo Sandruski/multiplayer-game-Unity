@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class GroundTilemapGenerator : MonoBehaviour
+public class GridManager : MonoBehaviour
 {
+    public List<GameObject> players;
+
     public Tilemap collidableGroundTilemap;
     public Tilemap nonCollidableGroundTilemap;
 
     public Tile bricks;
+    public AnimatedTile explodingBricks;
     public Tile grass;
     public Tile grassWithShadow;
 
@@ -43,36 +46,59 @@ public class GroundTilemapGenerator : MonoBehaviour
         {
             for (int y = height - 1; y >= 0; --y)
             {
-                Vector3Int position = new Vector3Int(x, y, 0);
-                if (!collidableGroundTilemap.HasTile(position))
+                Vector3Int cellPosition = new Vector3Int(x, y, 0);
+                if (!collidableGroundTilemap.HasTile(cellPosition))
                 {
                     bool isSpawnTile =
-                        position == topLeftSpawnTile 
-                        || position == topRightSpawnTile
-                        || position == bottomLeftSpawnTile
-                        || position == bottomRightSpawnTile
-                        || position == topLeftSpawnTileBottomTile
-                        || position == topLeftSpawnTileRightTile
-                        || position == topRightSpawnTileBottomTile
-                        || position == topRightSpawnTileLeftTile
-                        || position == bottomLeftSpawnTileTopTile
-                        || position == bottomLeftSpawnTileRightTile
-                        || position == bottomRightSpawnTileTopTile
-                        || position == bottomRightSpawnTileLeftTile;
+                        cellPosition == topLeftSpawnTile 
+                        || cellPosition == topRightSpawnTile
+                        || cellPosition == bottomLeftSpawnTile
+                        || cellPosition == bottomRightSpawnTile
+                        || cellPosition == topLeftSpawnTileBottomTile
+                        || cellPosition == topLeftSpawnTileRightTile
+                        || cellPosition == topRightSpawnTileBottomTile
+                        || cellPosition == topRightSpawnTileLeftTile
+                        || cellPosition == bottomLeftSpawnTileTopTile
+                        || cellPosition == bottomLeftSpawnTileRightTile
+                        || cellPosition == bottomRightSpawnTileTopTile
+                        || cellPosition == bottomRightSpawnTileLeftTile;
                     if (!isSpawnTile && Random.value <= bricksProbability)
                     {
-                        collidableGroundTilemap.SetTile(position, bricks);
+                        collidableGroundTilemap.SetTile(cellPosition, bricks);
                     }
                     else if (collidableGroundTilemap.HasTile(new Vector3Int(x, y + 1, 0)))
                     {
-                        nonCollidableGroundTilemap.SetTile(position, grassWithShadow);
+                        nonCollidableGroundTilemap.SetTile(cellPosition, grassWithShadow);
                     }
                     else
                     {
-                        nonCollidableGroundTilemap.SetTile(position, grass);
+                        nonCollidableGroundTilemap.SetTile(cellPosition, grass);
                     }
                 }
             }
         }
+    }
+
+    public Vector3 GetCellCenterPosition(Vector3 position)
+    {
+        Vector3Int cellPosition = nonCollidableGroundTilemap.WorldToCell(position);
+        return nonCollidableGroundTilemap.GetCellCenterWorld(cellPosition);
+    }
+
+    public List<GameObject> GetPlayersOnTile(Vector3 position)
+    {
+        List<GameObject> playersOnTile = new List<GameObject>();
+        Vector3Int cellPosition = nonCollidableGroundTilemap.WorldToCell(position);
+
+        foreach (GameObject player in players)
+        {
+            Vector3Int playerCellPosition = nonCollidableGroundTilemap.WorldToCell(player.transform.position);
+            if (cellPosition == playerCellPosition)
+            {
+                playersOnTile.Add(player);
+            }
+        }
+
+        return playersOnTile;
     }
 }
