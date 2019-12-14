@@ -10,13 +10,18 @@ public class Player : MonoBehaviour
     [SerializeField]
     uint maxBombs = 1;
     [SerializeField]
+    uint maxConcurrentBombs = 1;
+    [SerializeField]
     uint sizeBombs = 1;
     [SerializeField]
     float speed = 1.0f;
     #endregion
 
-    #region Private
+    #region NoInspector
     List<BombController> bombsPool = new List<BombController>();
+    [HideInInspector]
+    public uint concurrentBombs = 0u;
+    Rigidbody2D rb;
     #endregion
 
     void Start()
@@ -36,11 +41,38 @@ public class Player : MonoBehaviour
             bombController.SetOwner(this);
             bombsPool.Add(bombController);
         }
+
+        rb = gameObject.GetComponent<Rigidbody2D>();
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        
+        Vector2 velocity = Vector2.zero;
+        if (Input.GetKey("up"))
+        {
+            velocity.y += speed;
+        }
+        if (Input.GetKey("down"))
+        {
+            velocity.y -= speed;
+        }
+        if (Input.GetKey("left"))
+        {
+            velocity.x -= speed;
+        }
+        if (Input.GetKey("right"))
+        {
+            velocity.x += speed;
+        }
+       rb.velocity = velocity;
+
+        if (Input.GetKeyDown("space"))
+        {
+            if (concurrentBombs < maxConcurrentBombs)
+            {
+                SpawnBomb();
+            }
+        }
     }
 
     bool SpawnBomb()
@@ -50,7 +82,7 @@ public class Player : MonoBehaviour
             BombController bomb = bombsPool[i];
             if (!bomb.isAlive)
             {
-                bomb.GetSpawned();
+                bomb.Spawn();
                 return true;
             }
         }
