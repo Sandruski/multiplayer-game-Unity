@@ -123,4 +123,14 @@ public class Player : MonoBehaviour
         }
         maxBombs += 1;
     }
+
+    void IncreaseConcurrentBombs(uint amount)
+    {
+        concurrentBombs += amount;
+    }
+
+    void IncreaseSpeed(uint amount)
+    {
+        speed += amount;
+    }
 }
