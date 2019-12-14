@@ -22,6 +22,7 @@ public class Player : MonoBehaviour
     [HideInInspector]
     public uint concurrentBombs = 0u;
     Rigidbody2D rb;
+    bool up, down, left, right;
     #endregion
 
     void Start()
@@ -45,27 +46,24 @@ public class Player : MonoBehaviour
         rb = gameObject.GetComponent<Rigidbody2D>();
     }
 
-    void FixedUpdate()
+    void Update()
     {
-        Vector2 velocity = Vector2.zero;
         if (Input.GetKey("up"))
         {
-            velocity.y += speed;
+            up = true;
         }
         if (Input.GetKey("down"))
         {
-            velocity.y -= speed;
+            down = true;
         }
         if (Input.GetKey("left"))
         {
-            velocity.x -= speed;
+            left = true;
         }
         if (Input.GetKey("right"))
         {
-            velocity.x += speed;
+            right = true;
         }
-       rb.velocity = velocity;
-
         if (Input.GetKeyDown("space"))
         {
             if (concurrentBombs < maxConcurrentBombs)
@@ -73,6 +71,32 @@ public class Player : MonoBehaviour
                 SpawnBomb();
             }
         }
+    }
+
+    void FixedUpdate()
+    {
+        Vector2 velocity = Vector2.zero;
+        if (up)
+        {
+            velocity.y += speed;
+            up = false;
+        }
+        if (down)
+        {
+            velocity.y -= speed;
+            down = false;
+        }
+        if (left)
+        {
+            velocity.x -= speed;
+            left = false;
+        }
+        if (right)
+        {
+            velocity.x += speed;
+            right = false;
+        }
+        rb.velocity = velocity;
     }
 
     bool SpawnBomb()
