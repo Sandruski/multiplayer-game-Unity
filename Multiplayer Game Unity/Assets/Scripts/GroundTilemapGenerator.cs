@@ -9,6 +9,7 @@ public class GroundTilemapGenerator : MonoBehaviour
     public Tilemap nonCollidableGroundTilemap;
 
     public Tile bricks;
+    public AnimatedTile explodingBricks;
     public Tile grass;
     public Tile grassWithShadow;
 
