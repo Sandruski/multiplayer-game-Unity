@@ -39,32 +39,63 @@ public class ExplosionController : MonoBehaviour
     public void Spawn(Vector3 position, Orientation orientation)
     {
         transform.position = position;
+
+        isAlive = true;
+        gameObject.SetActive(true);
+
         switch (orientation)
         {
             case Orientation.top:
                 animator.SetBool("top", true);
+                animator.SetBool("bottom", false);
+                animator.SetBool("left", false);
+                animator.SetBool("right", false);
+                animator.SetBool("vertical", false);
+                animator.SetBool("horizontal", false);
                 break;
             case Orientation.bottom:
+                animator.SetBool("top", false);
                 animator.SetBool("bottom", true);
+                animator.SetBool("left", false);
+                animator.SetBool("right", false);
+                animator.SetBool("vertical", false);
+                animator.SetBool("horizontal", false);
                 break;
             case Orientation.left:
+                animator.SetBool("top", false);
+                animator.SetBool("bottom", false);
                 animator.SetBool("left", true);
+                animator.SetBool("right", false);
+                animator.SetBool("vertical", false);
+                animator.SetBool("horizontal", false);
                 break;
             case Orientation.right:
+                animator.SetBool("top", false);
+                animator.SetBool("bottom", false);
+                animator.SetBool("left", false);
                 animator.SetBool("right", true);
+                animator.SetBool("vertical", false);
+                animator.SetBool("horizontal", false);
                 break;
             case Orientation.vertical:
+                animator.SetBool("top", false);
+                animator.SetBool("bottom", false);
+                animator.SetBool("left", false);
+                animator.SetBool("right", false);
                 animator.SetBool("vertical", true);
+                animator.SetBool("horizontal", false);
                 break;
             case Orientation.horizontal:
+                animator.SetBool("top", false);
+                animator.SetBool("bottom", false);
+                animator.SetBool("left", false);
+                animator.SetBool("right", false);
+                animator.SetBool("vertical", false);
                 animator.SetBool("horizontal", true);
                 break;
             default:
                 break;
         }
-
-        isAlive = true;
-        gameObject.SetActive(true);
     }
 
     public void Despawn()

@@ -135,6 +135,11 @@ public class GridManager : MonoBehaviour
         players.Add(player);
     }
 
+    public void RemovePlayer(GameObject player)
+    {
+        players.Remove(player);
+    }
+
     public Vector3 GetCellCenterPosition(Vector3 position)
     {
         Vector3Int cellPosition = nonCollidableGroundTilemap.WorldToCell(position);
@@ -218,7 +223,7 @@ public class GridManager : MonoBehaviour
                 else if (nextTileType == TileType.Grass)
                 {
                     ExplosionController.Orientation orientation = ExplosionController.Orientation.center;
-                    Vector3Int nextNextCellPosition = nextCellPosition + direction * j;
+                    Vector3Int nextNextCellPosition = nextCellPosition + direction;
                     TileType nextNextTileType = tileTypes[nextNextCellPosition.x, nextNextCellPosition.y];
 
                     switch (i)

@@ -7,7 +7,7 @@ public class ExplodingBrickController : MonoBehaviour
     [HideInInspector]
     public bool isAlive;
 
-    private Animator animator;
+    Animator animator;
 
     void Awake()
     {
@@ -15,7 +15,7 @@ public class ExplodingBrickController : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
-    private void Update()
+    void Update()
     {
         if (isAlive)
         {
@@ -29,6 +29,7 @@ public class ExplodingBrickController : MonoBehaviour
     public void Spawn(Vector3 position)
     {
         transform.position = position;
+
         isAlive = true;
         gameObject.SetActive(true);
     }

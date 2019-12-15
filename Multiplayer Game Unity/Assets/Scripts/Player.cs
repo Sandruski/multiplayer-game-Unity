@@ -27,7 +27,7 @@ public class Player : MonoBehaviour
     bool up, down, left, right;
     #endregion
 
-    void Start()
+    void Awake()
     {
         if (maxBombs > poolSize)
         {
@@ -50,6 +50,16 @@ public class Player : MonoBehaviour
         animator.SetFloat("Speed", animSpeed);
 
         GameObject.Find("GridManager").GetComponent<GridManager>().AddPlayer(gameObject);
+    }
+
+    void OnDestroy()
+    {
+        GameObject gridManagerGameObject = GameObject.Find("GridManager");
+        if (gridManagerGameObject != null)
+        {
+            GridManager gridManager = gridManagerGameObject.GetComponent<GridManager>();
+            gridManager.RemovePlayer(gameObject);
+        }
     }
 
     void Update()
