@@ -15,19 +15,20 @@ public class GridManager : MonoBehaviour
     public int width;
     public int height;
 
+    private Vector3Int topLeftSpawnTile;
+    private Vector3Int topRightSpawnTile;
+    private Vector3Int bottomLeftSpawnTile;
+    private Vector3Int bottomRightSpawnTile;
+
     public float bricksProbability;
 
     private enum TileType { Block, Bricks, Grass };
 
     private TileType[,] tileTypes;
 
-    private Vector3Int topLeftSpawnTile;
-    private Vector3Int topRightSpawnTile;
-    private Vector3Int bottomLeftSpawnTile;
-    private Vector3Int bottomRightSpawnTile;
-
     private int explosionsPoolSize;
     private int explodingBricksPoolSize;
+
     private List<ExplosionController> explosionsPool;
     private List<ExplodingBrickController> explodingBricksPool;
 
@@ -35,43 +36,25 @@ public class GridManager : MonoBehaviour
 
     void Start()
     {
-        CenterCamera();
-
         players = new List<GameObject>();
+        tileTypes = new TileType[width, height];
 
-        explodingBricksPoolSize = explosionsPoolSize = width * height;
-
-        Object explosionPrefab = Resources.Load("Explosion");
-        explosionsPool = new List<ExplosionController>();
-        for (uint i = 0u; i < explosionsPoolSize; ++i)
-        {
-            GameObject explosion = (GameObject)Instantiate(explosionPrefab);
-            explosion.SetActive(false);
-            ExplosionController explosionController = explosion.GetComponent<ExplosionController>();
-            explosionsPool.Add(explosionController);
-        }
-
-        Object explodingBricksPrefab = Resources.Load("ExplodingBricks");
-        explodingBricksPool = new List<ExplodingBrickController>();
-        for (uint i = 0u; i < explodingBricksPoolSize; ++i)
-        {
-            GameObject explodingBrick = (GameObject)Instantiate(explodingBricksPrefab);
-            explodingBrick.SetActive(false);
-            ExplodingBrickController explodingBrickController = explodingBrick.GetComponent<ExplodingBrickController>();
-            explodingBricksPool.Add(explodingBrickController);
-        }
+        FillExplosionsPool();
+        FillExplodingBricksPool();
 
         topLeftSpawnTile = new Vector3Int(2, height - 1 - 1, 0);
         topRightSpawnTile = new Vector3Int(width - 2 - 1, height - 1 - 1, 0);
         bottomLeftSpawnTile = new Vector3Int(2, 1, 0);
         bottomRightSpawnTile = new Vector3Int(width - 2 - 1, 1, 0);
 
-        Object spawnPointPrefab = Resources.Load("SpawnPoint");
-        Instantiate(spawnPointPrefab, nonCollidableGroundTilemap.GetCellCenterWorld(topLeftSpawnTile), Quaternion.identity);
-        Instantiate(spawnPointPrefab, nonCollidableGroundTilemap.GetCellCenterWorld(topRightSpawnTile), Quaternion.identity);
-        Instantiate(spawnPointPrefab, nonCollidableGroundTilemap.GetCellCenterWorld(bottomLeftSpawnTile), Quaternion.identity);
-        Instantiate(spawnPointPrefab, nonCollidableGroundTilemap.GetCellCenterWorld(bottomRightSpawnTile), Quaternion.identity);
+        SpawnSpawnPoints();
+        GenerateMap();
 
+        CenterCamera();
+    }
+
+    private void GenerateMap()
+    {
         Vector3Int topLeftSpawnTileBottomTile = topLeftSpawnTile + Vector3Int.down;
         Vector3Int topLeftSpawnTileRightTile = topLeftSpawnTile + Vector3Int.right;
         Vector3Int topRightSpawnTileBottomTile = topRightSpawnTile + Vector3Int.down;
@@ -81,8 +64,6 @@ public class GridManager : MonoBehaviour
         Vector3Int bottomRightSpawnTileTopTile = bottomRightSpawnTile + Vector3Int.up;
         Vector3Int bottomRightSpawnTileLeftTile = bottomRightSpawnTile + Vector3Int.left;
 
-        tileTypes = new TileType[width, height];
-
         for (int x = 0; x < width; ++x)
         {
             for (int y = height - 1; y >= 0; --y)
@@ -91,7 +72,7 @@ public class GridManager : MonoBehaviour
                 if (!collidableGroundTilemap.HasTile(cellPosition))
                 {
                     bool isSpawnTile =
-                        cellPosition == topLeftSpawnTile 
+                        cellPosition == topLeftSpawnTile
                         || cellPosition == topRightSpawnTile
                         || cellPosition == bottomLeftSpawnTile
                         || cellPosition == bottomRightSpawnTile
@@ -161,6 +142,52 @@ public class GridManager : MonoBehaviour
         }
 
         return playersOnTile;
+    }
+
+    private void CenterCamera()
+    {
+        Vector3Int cellPosition = new Vector3Int((width - 1) / 2, (height - 1) / 2, 0);
+        Vector3 cellCenterPosition = nonCollidableGroundTilemap.GetCellCenterWorld(cellPosition);
+        Camera.main.transform.position = new Vector3(cellCenterPosition.x, cellCenterPosition.y, Camera.main.transform.position.z);
+    }
+
+    private void FillExplosionsPool()
+    {
+        explosionsPoolSize = width * height;
+
+        Object explosionPrefab = Resources.Load("Explosion");
+        explosionsPool = new List<ExplosionController>();
+        for (uint i = 0u; i < explosionsPoolSize; ++i)
+        {
+            GameObject explosion = (GameObject)Instantiate(explosionPrefab);
+            explosion.SetActive(false);
+            ExplosionController explosionController = explosion.GetComponent<ExplosionController>();
+            explosionsPool.Add(explosionController);
+        }
+    }
+
+    private void FillExplodingBricksPool()
+    {
+        explodingBricksPoolSize = width * height;
+
+        Object explodingBricksPrefab = Resources.Load("ExplodingBricks");
+        explodingBricksPool = new List<ExplodingBrickController>();
+        for (uint i = 0u; i < explodingBricksPoolSize; ++i)
+        {
+            GameObject explodingBrick = (GameObject)Instantiate(explodingBricksPrefab);
+            explodingBrick.SetActive(false);
+            ExplodingBrickController explodingBrickController = explodingBrick.GetComponent<ExplodingBrickController>();
+            explodingBricksPool.Add(explodingBrickController);
+        }
+    }
+
+    private void SpawnSpawnPoints()
+    {
+        Object spawnPointPrefab = Resources.Load("SpawnPoint");
+        Instantiate(spawnPointPrefab, nonCollidableGroundTilemap.GetCellCenterWorld(topLeftSpawnTile), Quaternion.identity);
+        Instantiate(spawnPointPrefab, nonCollidableGroundTilemap.GetCellCenterWorld(topRightSpawnTile), Quaternion.identity);
+        Instantiate(spawnPointPrefab, nonCollidableGroundTilemap.GetCellCenterWorld(bottomLeftSpawnTile), Quaternion.identity);
+        Instantiate(spawnPointPrefab, nonCollidableGroundTilemap.GetCellCenterWorld(bottomRightSpawnTile), Quaternion.identity);
     }
 
     public void SpawnExplosions(Player player, Vector3 position)
@@ -276,13 +303,6 @@ public class GridManager : MonoBehaviour
                 }
             }
         }
-    }
-
-    private void CenterCamera()
-    {
-        Vector3Int cellPosition = new Vector3Int((width - 1) / 2, (height - 1) / 2, 0);
-        Vector3 cellCenterPosition = nonCollidableGroundTilemap.GetCellCenterWorld(cellPosition);
-        Camera.main.transform.position = new Vector3(cellCenterPosition.x, cellCenterPosition.y, Camera.main.transform.position.z);
     }
 
     private bool SpawnExplosion(Player player, Vector3 position, ExplosionController.Orientation orientation)
