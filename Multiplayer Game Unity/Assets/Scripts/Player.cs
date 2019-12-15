@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 #pragma warning disable CS0414
-public class Player : MonoBehaviour
+public class Player : NetworkBehaviour
 {
     #region Inspector
     [SerializeField]
@@ -24,7 +25,6 @@ public class Player : MonoBehaviour
     public uint concurrentBombs = 0u;
     Rigidbody2D rb;
     Animator animator;
-    bool up, down, left, right;
     #endregion
 
     void Awake()
@@ -64,28 +64,28 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown("up")) { up = true; }
-        else if (Input.GetKeyUp("up")) { up = false; }
-
-        if (Input.GetKeyDown("down")){  down = true; }
-        else if (Input.GetKeyUp("down")) { down = false; }
-
-        if (Input.GetKeyDown("left")) { left = true; }
-        else if (Input.GetKeyUp("left")) { left = false; }
-
-        if (Input.GetKeyDown("right")) { right = true; }
-        else if (Input.GetKeyUp("right")) { right = false; }
-
-        animator.SetBool("Down", down);
-        animator.SetBool("Left", left);
-        animator.SetBool("Right", right);
-        animator.SetBool("Up", up);
-
-        if (Input.GetKeyDown("space"))
+        if (isLocalPlayer)
         {
-            if (concurrentBombs < maxConcurrentBombs)
+            if (Input.GetKeyDown("up")) { up = true; }
+            else if (Input.GetKeyUp("up")) { up = false; }
+
+            if (Input.GetKeyDown("down")) { down = true; }
+            else if (Input.GetKeyUp("down")) { down = false; }
+
+            if (Input.GetKeyDown("left")) { left = true; }
+            else if (Input.GetKeyUp("left")) { left = false; }
+
+            if (Input.GetKeyDown("right")) { right = true; }
+            else if (Input.GetKeyUp("right")) { right = false; }
+
+            SetAnimation();
+
+            if (Input.GetKeyDown("space"))
             {
-                SpawnBomb();
+                if (concurrentBombs < maxConcurrentBombs)
+                {
+                    SpawnBomb();
+                }
             }
         }
     }
@@ -123,6 +123,7 @@ public class Player : MonoBehaviour
                 return true;
             }
         }
+
         return false;
     }
 
@@ -133,6 +134,7 @@ public class Player : MonoBehaviour
             Debug.LogWarning("Num of MaxBombs: " + maxBombs + "is higher than the size of the pool:" + poolSize);
             return;
         }
+
         maxBombs += 1;
     }
 
@@ -148,6 +150,58 @@ public class Player : MonoBehaviour
 
     public void Kill()
     {
+        Destroy(gameObject);
+    }
 
+    // Animation sync
+    [SyncVar(hook = "OnUp")]
+    bool up;
+    [SyncVar(hook = "OnDown")]
+    bool down;
+    [SyncVar(hook = "OnLeft")]
+    bool left;
+    [SyncVar(hook = "OnRight")]
+    bool right;
+
+    [Command]
+    void CmdSetAnimation(bool up, bool down, bool left, bool right)
+    {
+        this.up = up;
+        this.down = down;
+        this.left = left;
+        this.right = right;
+    }
+
+    void OnUp(bool up)
+    {
+        this.up = up;
+        animator.SetBool("Up", this.up);
+    }
+
+    void OnDown(bool down)
+    {
+        this.down = down;
+        animator.SetBool("Down", this.down);
+    }
+
+    void OnLeft(bool left)
+    {
+        this.left = left;
+        animator.SetBool("Left", this.left);
+    }
+
+    void OnRight(bool right)
+    {
+        this.right = right;
+        animator.SetBool("Right", this.right);
+    }
+
+    void SetAnimation()
+    {
+        OnUp(up);
+        OnDown(down);
+        OnLeft(left);
+        OnRight(right);
+        CmdSetAnimation(up, down, left, right);
     }
 }
