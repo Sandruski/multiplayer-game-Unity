@@ -35,6 +35,8 @@ public class GridManager : MonoBehaviour
 
     void Start()
     {
+        CenterCamera();
+
         explodingBricksPoolSize = explosionsPoolSize = width * height;
 
         Object explosionPrefab = Resources.Load("Explosion");
@@ -256,6 +258,13 @@ public class GridManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void CenterCamera()
+    {
+        Vector3Int cellPosition = new Vector3Int((width - 1) / 2, (height - 1) / 2, 0);
+        Vector3 cellCenterPosition = nonCollidableGroundTilemap.GetCellCenterWorld(cellPosition);
+        Camera.main.transform.position = new Vector3(cellCenterPosition.x, cellCenterPosition.y, Camera.main.transform.position.z);
     }
 
     private bool SpawnExplosion(Player player, Vector3 position, ExplosionController.Orientation orientation)

@@ -133,4 +133,9 @@ public class Player : MonoBehaviour
     {
         speed += amount;
     }
+
+    public void Kill()
+    {
+
+    }
 }

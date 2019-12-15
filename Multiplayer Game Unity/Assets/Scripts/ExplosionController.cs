@@ -10,11 +10,13 @@ public class ExplosionController : MonoBehaviour
     public enum Orientation { center, top, bottom, left, right, vertical, horizontal };
 
     Player owner;
+    GridManager gridManager;
     Animator animator;
 
     void Awake()
     {
         isAlive = false;
+        gridManager = GameObject.Find("GridManager").GetComponent<GridManager>();
         animator = GetComponent<Animator>();
     }
 
@@ -67,6 +69,15 @@ public class ExplosionController : MonoBehaviour
 
     public void Despawn()
     {
+        List<GameObject> playersOnTop = gridManager.GetPlayersOnTile(transform.position);
+        foreach (GameObject playerOnTop in playersOnTop)
+        {
+            if (playerOnTop != owner)
+            {
+                playerOnTop.GetComponent<Player>().Kill();
+            }
+        }
+
         isAlive = false;
         gameObject.SetActive(false);
     }
