@@ -48,6 +48,8 @@ public class Player : MonoBehaviour
         rb = gameObject.GetComponent<Rigidbody2D>();
         animator = gameObject.GetComponent<Animator>();
         animator.SetFloat("Speed", animSpeed);
+
+        GameObject.Find("GridManager").GetComponent<GridManager>().AddPlayer(gameObject);
     }
 
     void Update()

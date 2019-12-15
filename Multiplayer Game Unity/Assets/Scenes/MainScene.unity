@@ -356,9 +356,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c652eebed9e50e49a2662ee406e6646, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  players:
-  - {fileID: 0}
-  - {fileID: 0}
   collidableGroundTilemap: {fileID: 1184347712}
   nonCollidableGroundTilemap: {fileID: 1790288564}
   bricks: {fileID: 11400000, guid: c72f9bea9749d6d4c91ae22319222284, type: 2}

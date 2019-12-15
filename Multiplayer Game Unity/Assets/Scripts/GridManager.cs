@@ -5,8 +5,6 @@ using UnityEngine.Tilemaps;
 
 public class GridManager : MonoBehaviour
 {
-    public List<GameObject> players;
-
     public Tilemap collidableGroundTilemap;
     public Tilemap nonCollidableGroundTilemap;
 
@@ -33,9 +31,13 @@ public class GridManager : MonoBehaviour
     private List<ExplosionController> explosionsPool;
     private List<ExplodingBrickController> explodingBricksPool;
 
+    private List<GameObject> players;
+
     void Start()
     {
         CenterCamera();
+
+        players = new List<GameObject>();
 
         explodingBricksPoolSize = explosionsPoolSize = width * height;
 
@@ -126,6 +128,11 @@ public class GridManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void AddPlayer(GameObject player)
+    {
+        players.Add(player);
     }
 
     public Vector3 GetCellCenterPosition(Vector3 position)
