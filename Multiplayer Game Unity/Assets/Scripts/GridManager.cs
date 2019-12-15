@@ -165,7 +165,7 @@ public class GridManager : MonoBehaviour
                     break;
             }
 
-            for (int j = 1; j < player.sizeBombs + 1; ++j)
+            for (int j = 0; j < player.sizeBombs; ++j)
             {
                 Vector3Int nextCellPosition = cellPosition + direction * j;
                 TileType nextTileType = tileTypes[nextCellPosition.x, nextCellPosition.y];
@@ -201,13 +201,66 @@ public class GridManager : MonoBehaviour
                 }
                 else if (nextTileType == TileType.Grass)
                 {
-                    SpawnExplosion(player, nonCollidableGroundTilemap.GetCellCenterWorld(nextCellPosition));
+                    ExplosionController.Orientation orientation = ExplosionController.Orientation.center;
+                    Vector3Int nextNextCellPosition = nextCellPosition + direction * j;
+                    TileType nextNextTileType = tileTypes[nextNextCellPosition.x, nextNextCellPosition.y];
+
+                    if (j != 0)
+                    {
+                        switch (i)
+                        {
+                            case 0:
+                                if (nextNextTileType != TileType.Grass || j == player.sizeBombs)
+                                {
+                                    orientation = ExplosionController.Orientation.left;
+                                }
+                                else
+                                {
+                                    orientation = ExplosionController.Orientation.horizontal;
+                                }
+                                break;
+                            case 1:
+                                if (nextNextTileType != TileType.Grass || j == player.sizeBombs)
+                                {
+                                    orientation = ExplosionController.Orientation.right;
+                                }
+                                else
+                                {
+                                    orientation = ExplosionController.Orientation.horizontal;
+                                }
+                                break;
+                            case 2:
+                                if (nextNextTileType != TileType.Grass || j == player.sizeBombs)
+                                {
+                                    orientation = ExplosionController.Orientation.top;
+                                }
+                                else
+                                {
+                                    orientation = ExplosionController.Orientation.vertical;
+                                }
+                                break;
+                            case 3:
+                                if (nextNextTileType != TileType.Grass || j == player.sizeBombs)
+                                {
+                                    orientation = ExplosionController.Orientation.bottom;
+                                }
+                                else
+                                {
+                                    orientation = ExplosionController.Orientation.vertical;
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+
+                    SpawnExplosion(player, nonCollidableGroundTilemap.GetCellCenterWorld(nextCellPosition), orientation);
                 }
             }
         }
     }
 
-    private bool SpawnExplosion(Player player, Vector3 position)
+    private bool SpawnExplosion(Player player, Vector3 position, ExplosionController.Orientation orientation)
     {
         for (int i = 0; i < explosionsPoolSize; ++i)
         {
@@ -215,7 +268,7 @@ public class GridManager : MonoBehaviour
             if (!explosion.isAlive)
             {
                 explosion.SetOwner(player);
-                explosion.Spawn(position);
+                explosion.Spawn(position, orientation);
                 return true;
             }
         }
