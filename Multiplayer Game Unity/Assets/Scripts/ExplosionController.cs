@@ -18,6 +18,17 @@ public class ExplosionController : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
+    void Update()
+    {
+        if (isAlive)
+        {
+            if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
+            {
+                Despawn();
+            }
+        }
+    }
+
     public void SetOwner(Player owner)
     {
         this.owner = owner;
@@ -26,7 +37,7 @@ public class ExplosionController : MonoBehaviour
     public void Spawn(Vector3 position, Orientation orientation)
     {
         transform.position = position;
-        switch(orientation)
+        switch (orientation)
         {
             case Orientation.top:
                 animator.SetBool("top", true);
