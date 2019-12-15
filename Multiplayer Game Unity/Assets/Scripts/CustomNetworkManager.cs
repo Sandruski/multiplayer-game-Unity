@@ -16,7 +16,7 @@ public class CustomNetworkManager : NetworkManager
 {
     public short playerPrefabIndex;
 
-    public string[] playerNames = new string[] { "Boy", "Girl", "Robot" };
+    public string[] playerNames = new string[] { "White", "Black", "Red", "Blue" };
 
     private void OnGUI()
     {

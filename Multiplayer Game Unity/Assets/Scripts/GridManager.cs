@@ -64,6 +64,12 @@ public class GridManager : MonoBehaviour
         bottomLeftSpawnTile = new Vector3Int(2, 1, 0);
         bottomRightSpawnTile = new Vector3Int(width - 2 - 1, 1, 0);
 
+        Object spawnPointPrefab = Resources.Load("SpawnPoint");
+        Instantiate(spawnPointPrefab, nonCollidableGroundTilemap.GetCellCenterWorld(topLeftSpawnTile), Quaternion.identity);
+        Instantiate(spawnPointPrefab, nonCollidableGroundTilemap.GetCellCenterWorld(topRightSpawnTile), Quaternion.identity);
+        Instantiate(spawnPointPrefab, nonCollidableGroundTilemap.GetCellCenterWorld(bottomLeftSpawnTile), Quaternion.identity);
+        Instantiate(spawnPointPrefab, nonCollidableGroundTilemap.GetCellCenterWorld(bottomRightSpawnTile), Quaternion.identity);
+
         Vector3Int topLeftSpawnTileBottomTile = topLeftSpawnTile + Vector3Int.down;
         Vector3Int topLeftSpawnTileRightTile = topLeftSpawnTile + Vector3Int.right;
         Vector3Int topRightSpawnTileBottomTile = topRightSpawnTile + Vector3Int.down;
