@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.Networking.Match;
+using System.Collections.Generic;
 
 #pragma warning disable CS0618
 public class MsgTypes
@@ -18,17 +20,11 @@ public class CustomNetworkManager : NetworkManager
 
     public string[] playerNames = new string[] { "White", "Black", "Red", "Blue" };
 
-    private void OnGUI()
-    {
-        if (!isNetworkActive)
-        {
-            playerPrefabIndex = (short)GUI.SelectionGrid(
-                new Rect(Screen.width - 200, 10, 200, 50),
-                playerPrefabIndex,
-                playerNames,
-                3);
-        }
-    }
+    // MatchMaking
+
+    public List<MatchInfoSnapshot> matchList;
+    string newMatchName;
+    uint maxMatchSize = 4;
 
     // 1) Executed in the server
     public override void OnStartServer()
@@ -91,5 +87,66 @@ public class CustomNetworkManager : NetworkManager
             Quaternion.identity);
 
         NetworkServer.Spawn(newObject);
+    }
+
+    public void OnCreateMatchClicked(string matchName)
+    {
+        Debug.Log("OnCreateMatchClicked" + matchName);
+        NetworkManager.singleton.StartMatchMaker();
+        NetworkManager.singleton.matchMaker.CreateMatch(matchName, maxMatchSize, true, "", "", "", 0, 0, OnMatchCreate);
+    }
+
+    public override void OnMatchCreate(bool success, string extendedInfo, MatchInfo matchInfo)
+    {
+        NetworkManager.singleton.StopMatchMaker();
+
+        if (success)
+        {
+            NetworkManager.singleton.StartHost(matchInfo);
+        }
+        else
+        {
+            Debug.Log("OnMatchCreate failed");
+        }
+    }
+
+    public void OnJoinMatchClicked(UnityEngine.Networking.Types.NetworkID networkID)
+    {
+        NetworkManager.singleton.StartMatchMaker();
+        NetworkManager.singleton.matchMaker.JoinMatch(networkID, "", "", "", 0, 0, OnMatchJoin);
+    }
+
+    public void OnMatchJoin(bool success, string extendedInfo, MatchInfo matchInfo)
+    {
+        NetworkManager.singleton.StopMatchMaker();
+
+        if (success)
+        {
+            NetworkManager.singleton.StartClient(matchInfo);
+        }
+        else
+        {
+            Debug.Log("OnMatchJoin failed");
+        }
+    }
+
+    void RequestMatches()
+    {
+        NetworkManager.singleton.StartMatchMaker();
+        NetworkManager.singleton.matchMaker.ListMatches(0, 10, "", true, 0, 0, OnMatchList);
+    }
+
+    public void OnMatchList(bool success, string extendedInfo, List<MatchInfoSnapshot> matches)
+    {
+        NetworkManager.singleton.StopMatchMaker();
+
+        if (success)
+        {
+            matchList = matches;
+        }
+        else
+        {
+            Debug.Log("OnMatchList failed");
+        }
     }
 }
