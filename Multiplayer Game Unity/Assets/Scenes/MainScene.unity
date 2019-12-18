@@ -1755,6 +1755,7 @@ MonoBehaviour:
   - Black
   - Red
   - Blue
+  menuManager: {fileID: 0}
 --- !u!4 &1379246755
 Transform:
   m_ObjectHideFlags: 0

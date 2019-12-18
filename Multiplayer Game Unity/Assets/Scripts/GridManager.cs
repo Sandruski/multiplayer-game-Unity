@@ -48,8 +48,6 @@ public class GridManager : MonoBehaviour
         bottomLeftSpawnTile = new Vector3Int(2, 1, 0);
         bottomRightSpawnTile = new Vector3Int(width - 2 - 1, 1, 0);
 
-        SpawnSpawnPoints();
-
         CenterCamera();
 
         GenerateMap();
@@ -195,15 +193,6 @@ public class GridManager : MonoBehaviour
             ExplodingBrickController explodingBrickController = explodingBrick.GetComponent<ExplodingBrickController>();
             explodingBricksPool.Add(explodingBrickController);
         }
-    }
-
-    private void SpawnSpawnPoints()
-    {
-        Object spawnPointPrefab = Resources.Load("SpawnPoint");
-        Instantiate(spawnPointPrefab, nonCollidableGroundTilemap.GetCellCenterWorld(topLeftSpawnTile), Quaternion.identity);
-        Instantiate(spawnPointPrefab, nonCollidableGroundTilemap.GetCellCenterWorld(topRightSpawnTile), Quaternion.identity);
-        Instantiate(spawnPointPrefab, nonCollidableGroundTilemap.GetCellCenterWorld(bottomLeftSpawnTile), Quaternion.identity);
-        Instantiate(spawnPointPrefab, nonCollidableGroundTilemap.GetCellCenterWorld(bottomRightSpawnTile), Quaternion.identity);
     }
 
     public void SpawnExplosions(Player player, Vector3 position)
