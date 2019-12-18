@@ -21,7 +21,7 @@ public class CustomNetworkManager : NetworkManager
     public string[] playerNames = new string[] { "White", "Black", "Red", "Blue" };
 
     // MatchMaking
-
+    public MenuManager menuManager;
     public List<MatchInfoSnapshot> matchList;
     string newMatchName;
     uint maxMatchSize = 4;
@@ -89,14 +89,14 @@ public class CustomNetworkManager : NetworkManager
         NetworkServer.Spawn(newObject);
     }
 
-    public void OnCreateMatchClicked(string matchName)
+    public void OnCreateMatch(string matchName)
     {
         Debug.Log("OnCreateMatchClicked" + matchName);
         NetworkManager.singleton.StartMatchMaker();
         NetworkManager.singleton.matchMaker.CreateMatch(matchName, maxMatchSize, true, "", "", "", 0, 0, OnMatchCreate);
     }
 
-    public override void OnMatchCreate(bool success, string extendedInfo, MatchInfo matchInfo)
+    public void OnMatchCreate(bool success, string extendedInfo, MatchInfo matchInfo)
     {
         NetworkManager.singleton.StopMatchMaker();
 
@@ -110,13 +110,21 @@ public class CustomNetworkManager : NetworkManager
         }
     }
 
-    public void OnJoinMatchClicked(UnityEngine.Networking.Types.NetworkID networkID)
+    public bool OnJoinMatch(string room)
     {
-        NetworkManager.singleton.StartMatchMaker();
-        NetworkManager.singleton.matchMaker.JoinMatch(networkID, "", "", "", 0, 0, OnMatchJoin);
+        foreach(MatchInfoSnapshot match in matchList)
+        {
+            if (match.name == room)
+            {
+                NetworkManager.singleton.StartMatchMaker();
+                NetworkManager.singleton.matchMaker.JoinMatch(match.networkId, "", "", "", 0, 0, OnMatchJoin);
+                return true;
+            }
+        }
+        return false;
     }
 
-    public void OnMatchJoin(bool success, string extendedInfo, MatchInfo matchInfo)
+    void OnMatchJoin(bool success, string extendedInfo, MatchInfo matchInfo)
     {
         NetworkManager.singleton.StopMatchMaker();
 
@@ -130,7 +138,7 @@ public class CustomNetworkManager : NetworkManager
         }
     }
 
-    void RequestMatches()
+    public void RequestMatches()
     {
         NetworkManager.singleton.StartMatchMaker();
         NetworkManager.singleton.matchMaker.ListMatches(0, 10, "", true, 0, 0, OnMatchList);
@@ -143,6 +151,10 @@ public class CustomNetworkManager : NetworkManager
         if (success)
         {
             matchList = matches;
+            if (menuManager != null)
+            {
+                menuManager.OnUpdateDropbox();
+            }
         }
         else
         {
