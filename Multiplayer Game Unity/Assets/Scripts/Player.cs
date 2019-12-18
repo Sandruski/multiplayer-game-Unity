@@ -5,9 +5,11 @@ using UnityEngine.Networking;
 #pragma warning disable CS0414
 public class Player : NetworkBehaviour
 {
+    public enum PlayerColor { white, black, red, blue };
+    [SyncVar]
+    public PlayerColor color = PlayerColor.white;
+
     #region Inspector
-    [SerializeField]
-    uint poolSize = 4;
     [SerializeField]
     uint maxBombs = 1;
     [SerializeField]
@@ -20,36 +22,25 @@ public class Player : NetworkBehaviour
     #endregion
 
     #region NoInspector
-    List<BombController> bombsPool = new List<BombController>();
     [HideInInspector]
     public uint concurrentBombs = 0u;
     Rigidbody2D rb;
     Animator animator;
+    CustomNetworkManager networkManager;
+    GridManager gridManager;
     #endregion
 
     void Awake()
     {
-        if (maxBombs > poolSize)
-        {
-            Debug.LogWarning("Num of MaxBombs: " + maxBombs + "is higher than the size of the pool:" + poolSize);
-            poolSize = maxBombs;
-        }
-
-        Object bombPrefab = Resources.Load("Bomb");
-        for (uint i = 0u; i < poolSize; ++i)
-        {
-            GameObject bomb = (GameObject)Instantiate(bombPrefab);
-            bomb.SetActive(false);
-            BombController bombController = bomb.GetComponent<BombController>();
-            bombController.SetOwner(this);
-            bombsPool.Add(bombController);
-        }
-
         rb = gameObject.GetComponent<Rigidbody2D>();
         animator = gameObject.GetComponent<Animator>();
         animator.SetFloat("Speed", animSpeed);
 
-        GameObject.Find("GridManager").GetComponent<GridManager>().AddPlayer(gameObject);
+        gridManager = GameObject.Find("GridManager").GetComponent<GridManager>();
+        gridManager.AddPlayer(gameObject);
+
+        NetworkManager mng = NetworkManager.singleton;
+        networkManager = mng.GetComponent<CustomNetworkManager>();
     }
 
     void OnDestroy()
@@ -84,7 +75,7 @@ public class Player : NetworkBehaviour
             {
                 if (concurrentBombs < maxConcurrentBombs)
                 {
-                    SpawnBomb();
+                    CmdAddBomb();
                 }
             }
         }
@@ -110,32 +101,6 @@ public class Player : NetworkBehaviour
             velocity.x += speed;
         }
         rb.velocity = velocity;
-    }
-
-    bool SpawnBomb()
-    {
-        for (int i = 0; i < maxBombs; ++i)
-        {
-            BombController bomb = bombsPool[i];
-            if (!bomb.isAlive)
-            {
-                bomb.Spawn();
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    void IncreaseMaxBombs()
-    {
-        if (maxBombs > poolSize)
-        {
-            Debug.LogWarning("Num of MaxBombs: " + maxBombs + "is higher than the size of the pool:" + poolSize);
-            return;
-        }
-
-        maxBombs += 1;
     }
 
     void IncreaseConcurrentBombs(uint amount)
@@ -203,5 +168,12 @@ public class Player : NetworkBehaviour
         OnLeft(left);
         OnRight(right);
         CmdSetAnimation(up, down, left, right);
+    }
+
+    [Command]
+    void CmdAddBomb()
+    {
+        Vector3 bombPosition = gridManager.GetCellCenterPosition(transform.position);
+        networkManager.AddBomb(bombPosition, color);
     }
 }

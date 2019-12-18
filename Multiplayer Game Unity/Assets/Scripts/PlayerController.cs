@@ -42,7 +42,7 @@ public class PlayerController : NetworkBehaviour
     [Command]
     void CmdAddPumpkin()
     {
-        networkManager.AddObject(3, this.transform);
+        networkManager.AddObject(3, Vector3.zero);
     }
 
     private void OnGUI()
