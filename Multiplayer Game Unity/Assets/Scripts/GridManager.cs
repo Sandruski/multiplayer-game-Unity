@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.Networking;
 
 public class GridManager : MonoBehaviour
 {
@@ -48,12 +49,13 @@ public class GridManager : MonoBehaviour
         bottomRightSpawnTile = new Vector3Int(width - 2 - 1, 1, 0);
 
         SpawnSpawnPoints();
-        GenerateMap();
 
         CenterCamera();
+
+        GenerateMap();
     }
 
-    private void GenerateMap()
+    public void GenerateMap()
     {
         Vector3Int topLeftSpawnTileBottomTile = topLeftSpawnTile + Vector3Int.down;
         Vector3Int topLeftSpawnTileRightTile = topLeftSpawnTile + Vector3Int.right;
@@ -84,7 +86,7 @@ public class GridManager : MonoBehaviour
                         || cellPosition == bottomLeftSpawnTileRightTile
                         || cellPosition == bottomRightSpawnTileTopTile
                         || cellPosition == bottomRightSpawnTileLeftTile;
-                    if (!isSpawnTile && Random.value <= bricksProbability)
+                    if (!isSpawnTile && 0.1 <= bricksProbability) // Random.value
                     {
                         collidableGroundTilemap.SetTile(cellPosition, bricks);
                         tileTypes[x, y] = TileType.Bricks;
@@ -142,6 +144,20 @@ public class GridManager : MonoBehaviour
         }
 
         return playersOnTile;
+    }
+
+    public Player GetPlayer(Player.PlayerColor playerColor)
+    {
+        foreach(GameObject gameObject in players)
+        {
+            Player player = gameObject.GetComponent<Player>();
+            if (player.color == playerColor)
+            {
+                return player;
+            }
+        }
+
+        return null;
     }
 
     private void CenterCamera()
@@ -334,5 +350,29 @@ public class GridManager : MonoBehaviour
         }
 
         return false;
+    }
+
+    public Vector3 GetPlayerSpawnPosition(Player.PlayerColor playerColor)
+    {
+        Vector3Int cellPosition = Vector3Int.zero;
+        switch (playerColor)
+        {
+            case Player.PlayerColor.white:
+                cellPosition = topLeftSpawnTile;
+                break;
+            case Player.PlayerColor.black:
+                cellPosition = bottomRightSpawnTile;
+                break;
+            case Player.PlayerColor.red:
+                cellPosition = bottomLeftSpawnTile;
+                break;
+            case Player.PlayerColor.blue:
+                cellPosition = topRightSpawnTile;
+                break;
+            default:
+                break;
+        }
+
+        return nonCollidableGroundTilemap.GetCellCenterWorld(cellPosition);
     }
 }

@@ -18,6 +18,10 @@ public class CustomNetworkManager : NetworkManager
 
     public string[] playerNames = new string[] { "White", "Black", "Red", "Blue" };
 
+    public enum SpawnPrefabs { WhitePlayer, BlackPlayer, RedPlayer, BluePlayer, Bomb }
+
+    private GridManager gridManager;
+
     private void OnGUI()
     {
         if (!isNetworkActive)
@@ -28,6 +32,11 @@ public class CustomNetworkManager : NetworkManager
                 playerNames,
                 3);
         }
+    }
+
+    private void Start()
+    {
+        gridManager = GameObject.Find("GridManager").GetComponent<GridManager>();
     }
 
     // 1) Executed in the server
@@ -65,7 +74,12 @@ public class CustomNetworkManager : NetworkManager
     {
         MsgTypes.PlayerPrefabMsg msg = netMsg.ReadMessage<MsgTypes.PlayerPrefabMsg>();
         playerPrefab = spawnPrefabs[msg.prefabIndex];
-        base.OnServerAddPlayer(netMsg.conn, msg.controllerId);
+        Debug.Log("Prefab index is " + playerPrefabIndex);
+        Player.PlayerColor playerColor = (Player.PlayerColor)msg.prefabIndex;
+        Vector3 playerPosition = gridManager.GetPlayerSpawnPosition(playerColor);
+        GameObject player = (GameObject)Instantiate(playerPrefab, playerPosition, Quaternion.identity);
+        player.GetComponent<Player>().color = playerColor;
+        NetworkServer.AddPlayerForConnection(netMsg.conn, player, msg.controllerId);
     }
 
     public void ChangePlayerPrefab(PlayerController currentPlayer, int prefabIndex)
@@ -83,12 +97,25 @@ public class CustomNetworkManager : NetworkManager
             currentPlayer.connectionToClient, newPlayer, 0);
     }
 
-    public void AddObject(int objIndex, Transform t)
+    public void AddObject(int objIndex, Vector3 position)
     {
         GameObject newObject = Instantiate(
             spawnPrefabs[objIndex],
-            t.position,
+            position,
             Quaternion.identity);
+
+        NetworkServer.Spawn(newObject);
+    }
+
+    public void AddBomb(Vector3 position, Player.PlayerColor playerColor)
+    {
+        GameObject newObject = Instantiate(
+            spawnPrefabs[(int)SpawnPrefabs.Bomb],
+            position,
+            Quaternion.identity);
+
+        BombController bombController = newObject.GetComponent<BombController>();
+        bombController.playerColor = playerColor;
 
         NetworkServer.Spawn(newObject);
     }
