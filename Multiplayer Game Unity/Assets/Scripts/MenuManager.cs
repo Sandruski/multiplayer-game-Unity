@@ -7,14 +7,27 @@ public class MenuManager : MonoBehaviour
     public GameObject mainSection;
     public GameObject onlineSection;
     public GameObject lanSection;
+    public Dropdown dropdownCharacter;
 
-    public Dropdown dropdown;
+    public Dropdown dropdownMatches;
     public InputField roomName;
     public CustomNetworkManager netManager;
 
-    private void Start()
+    void Start()
     {
         netManager.RequestMatches();
+
+        foreach (string player in netManager.playerNames)
+        {
+            dropdownCharacter.options.Add(new Dropdown.OptionData() { text = player });
+        }
+        dropdownCharacter.value = 0;
+        dropdownCharacter.RefreshShownValue();
+    }
+
+    public void OnCharacterDropdown()
+    {
+        netManager.playerPrefabIndex = (short)dropdownCharacter.value;
     }
 
     public void OnBackButton()
@@ -36,25 +49,37 @@ public class MenuManager : MonoBehaviour
         onlineSection.SetActive(true);
     }
 
+    // Lan
+    public void OnHostButton()
+    {
+        netManager.OnStartServer();
+    }
+
+    public void OnClientButton()
+    {
+
+    }
+
+    // Online
     public void OnRefreshButton()
     {
         netManager.RequestMatches();
-        dropdown.ClearOptions();
+        dropdownMatches.ClearOptions();
     }
 
     public void OnUpdateDropbox()
     {
         foreach (MatchInfoSnapshot match in netManager.matchList)
         {
-            dropdown.options.Add(new Dropdown.OptionData() { text = match.name });
+            dropdownMatches.options.Add(new Dropdown.OptionData() { text = match.name });
         }
     }
 
     public void OnJoinButton()
     {
-        if (dropdown.value >= 0)
+        if (dropdownMatches.value >= 0 && dropdownMatches.value < dropdownMatches.options.Count)
         {
-            string selected = dropdown.options[dropdown.value].text;
+            string selected = dropdownMatches.options[dropdownMatches.value].text;
             netManager.OnJoinMatch(selected);
         }
     }
