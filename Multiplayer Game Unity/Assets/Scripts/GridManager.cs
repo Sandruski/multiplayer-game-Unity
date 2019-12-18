@@ -35,6 +35,22 @@ public class GridManager : MonoBehaviour
 
     private List<GameObject> players;
 
+    static GridManager _this;
+
+    public GridManager GetInstance()
+    {
+        return _this;
+    }
+
+    private void Awake()
+    {
+        if (_this != null)
+        {
+            Destroy(this.gameObject);
+        }
+        _this = this;
+    }
+
     void Start()
     {
         players = new List<GameObject>();
