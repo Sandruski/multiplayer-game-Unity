@@ -17,6 +17,7 @@ public class MsgTypes
 public class CustomNetworkManager : NetworkManager
 {
     #region Public
+    [HideInInspector]
     public short playerPrefabIndex;
 
     public string[] playerNames = new string[] { "White", "Black", "Red", "Blue" };

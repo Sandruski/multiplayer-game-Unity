@@ -14,7 +14,7 @@ public class DynamicGridManager : NetworkBehaviour
     private TileDef[,] tileDefs;
 
     private List<GameObject> players;
-
+    
     private StaticGridManager staticGridManager;
     private CustomNetworkManager networkManager;
     #endregion
