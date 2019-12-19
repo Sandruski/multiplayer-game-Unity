@@ -30,7 +30,10 @@ public class Timer : NetworkBehaviour
     {
         this.timer = timer;
 
-        int time = (int)this.timer;
-        text.text = time.ToString();
+        if (text != null)
+        {
+            int time = (int)this.timer;
+            text.text = time.ToString();
+        }
     }
 }
