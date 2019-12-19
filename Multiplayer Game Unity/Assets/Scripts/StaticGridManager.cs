@@ -24,8 +24,25 @@ public class StaticGridManager : MonoBehaviour
     public Vector3Int bottomRightSpawnTile;
     #endregion
 
+    #region Private
+    private static StaticGridManager singleton;
+    #endregion
+
+    public static StaticGridManager GetSingleton()
+    {
+        return singleton;
+    }
+
     void Start()
     {
+        if (singleton != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        singleton = this;
+
         topLeftSpawnTile = new Vector3Int(2, height - 1 - 1, 0);
         topRightSpawnTile = new Vector3Int(width - 2 - 1, height - 1 - 1, 0);
         bottomLeftSpawnTile = new Vector3Int(2, 1, 0);

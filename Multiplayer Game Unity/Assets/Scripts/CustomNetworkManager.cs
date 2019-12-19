@@ -32,8 +32,6 @@ public class CustomNetworkManager : NetworkManager
         DynamicGridManager
     }
 
-    public StaticGridManager staticGridManager;
-
     // MatchMaking
     public MenuManager menuManager;
     public List<MatchInfoSnapshot> matchList;
@@ -55,11 +53,6 @@ public class CustomNetworkManager : NetworkManager
                 playerNames,
                 3);
         }
-    }
-
-    private void Awake()
-    {
-        staticGridManager = GameObject.Find("StaticGridManager").GetComponent<StaticGridManager>();
     }
 
     // 1) Executed in the server
@@ -98,7 +91,7 @@ public class CustomNetworkManager : NetworkManager
         MsgTypes.PlayerPrefabMsg msg = netMsg.ReadMessage<MsgTypes.PlayerPrefabMsg>();
         playerPrefab = spawnPrefabs[msg.prefabIndex];
         Player.PlayerColor playerColor = (Player.PlayerColor)msg.prefabIndex;
-        Vector3 playerPosition = staticGridManager.GetPlayerSpawnPosition(playerColor);
+        Vector3 playerPosition = StaticGridManager.GetSingleton().GetPlayerSpawnPosition(playerColor);
         GameObject player = (GameObject)Instantiate(playerPrefab, playerPosition, Quaternion.identity);
         player.GetComponent<Player>().color = playerColor;
         NetworkServer.AddPlayerForConnection(netMsg.conn, player, msg.controllerId);

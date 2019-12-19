@@ -7,7 +7,6 @@ public class ExplodingBrickController : NetworkBehaviour
 {
     #region Private
     private CustomNetworkManager networkManager;
-    private DynamicGridManager dynamicGridManager;
     private Animator animator;
     #endregion
 
@@ -15,7 +14,6 @@ public class ExplodingBrickController : NetworkBehaviour
     {
         NetworkManager mng = NetworkManager.singleton;
         networkManager = mng.GetComponent<CustomNetworkManager>();
-        dynamicGridManager = GameObject.Find("DynamicGridManager").GetComponent<DynamicGridManager>();
         animator = GetComponent<Animator>();
     }
 
@@ -28,7 +26,7 @@ public class ExplodingBrickController : NetworkBehaviour
 
         if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
         {
-            dynamicGridManager.RemoveExplodingBricksTile(gameObject);
+            DynamicGridManager.GetSingleton().RemoveExplodingBricksTile(gameObject);
         }
     }
 }

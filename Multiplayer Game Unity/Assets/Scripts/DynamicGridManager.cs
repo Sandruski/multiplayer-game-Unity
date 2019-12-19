@@ -15,46 +15,59 @@ public class DynamicGridManager : NetworkBehaviour
     private List<GameObject> playerGameObjects;
     
     private CustomNetworkManager networkManager;
-    private StaticGridManager staticGridManager;
+
+    private static DynamicGridManager singleton;
     #endregion
+
+    public static DynamicGridManager GetSingleton()
+    {
+        return singleton;
+    }
 
     void Start()
     {
+        if (singleton != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        singleton = this;
+
         NetworkManager mng = NetworkManager.singleton;
         networkManager = mng.GetComponent<CustomNetworkManager>();
-        staticGridManager = GameObject.Find("StaticGridManager").GetComponent<StaticGridManager>();
 
-        tileDefs = new TileDef[staticGridManager.width, staticGridManager.height];
+        tileDefs = new TileDef[StaticGridManager.GetSingleton().width, StaticGridManager.GetSingleton().height];
         playerGameObjects = new List<GameObject>();
     }
 
     public void GenerateMap()
     {
-        Vector3Int topLeftSpawnTileBottomTile = staticGridManager.topLeftSpawnTile + Vector3Int.down;
-        Vector3Int topLeftSpawnTileRightTile = staticGridManager.topLeftSpawnTile + Vector3Int.right;
-        Vector3Int topRightSpawnTileBottomTile = staticGridManager.topRightSpawnTile + Vector3Int.down;
-        Vector3Int topRightSpawnTileLeftTile = staticGridManager.topRightSpawnTile + Vector3Int.left;
-        Vector3Int bottomLeftSpawnTileTopTile = staticGridManager.bottomLeftSpawnTile + Vector3Int.up;
-        Vector3Int bottomLeftSpawnTileRightTile = staticGridManager.bottomLeftSpawnTile + Vector3Int.right;
-        Vector3Int bottomRightSpawnTileTopTile = staticGridManager.bottomRightSpawnTile + Vector3Int.up;
-        Vector3Int bottomRightSpawnTileLeftTile = staticGridManager.bottomRightSpawnTile + Vector3Int.left;
+        Vector3Int topLeftSpawnTileBottomTile = StaticGridManager.GetSingleton().topLeftSpawnTile + Vector3Int.down;
+        Vector3Int topLeftSpawnTileRightTile = StaticGridManager.GetSingleton().topLeftSpawnTile + Vector3Int.right;
+        Vector3Int topRightSpawnTileBottomTile = StaticGridManager.GetSingleton().topRightSpawnTile + Vector3Int.down;
+        Vector3Int topRightSpawnTileLeftTile = StaticGridManager.GetSingleton().topRightSpawnTile + Vector3Int.left;
+        Vector3Int bottomLeftSpawnTileTopTile = StaticGridManager.GetSingleton().bottomLeftSpawnTile + Vector3Int.up;
+        Vector3Int bottomLeftSpawnTileRightTile = StaticGridManager.GetSingleton().bottomLeftSpawnTile + Vector3Int.right;
+        Vector3Int bottomRightSpawnTileTopTile = StaticGridManager.GetSingleton().bottomRightSpawnTile + Vector3Int.up;
+        Vector3Int bottomRightSpawnTileLeftTile = StaticGridManager.GetSingleton().bottomRightSpawnTile + Vector3Int.left;
 
-        TileDef.TileType[,] tileTypes = new TileDef.TileType[staticGridManager.width, staticGridManager.height];
+        TileDef.TileType[,] tileTypes = new TileDef.TileType[StaticGridManager.GetSingleton().width, StaticGridManager.GetSingleton().height];
 
-        for (int x = 0; x < staticGridManager.width; ++x)
+        for (int x = 0; x < StaticGridManager.GetSingleton().width; ++x)
         {
-            for (int y = staticGridManager.height - 1; y >= 0; --y)
+            for (int y = StaticGridManager.GetSingleton().height - 1; y >= 0; --y)
             {
                 Vector3Int cellPosition = new Vector3Int(x, y, 0);
-                if (!staticGridManager.collidableGroundTilemap.HasTile(cellPosition))
+                if (!StaticGridManager.GetSingleton().collidableGroundTilemap.HasTile(cellPosition))
                 {
-                    Vector3 cellWorldPosition = staticGridManager.nonCollidableGroundTilemap.GetCellCenterWorld(cellPosition);
+                    Vector3 cellWorldPosition = StaticGridManager.GetSingleton().nonCollidableGroundTilemap.GetCellCenterWorld(cellPosition);
 
                     bool isSpawnTile =
-                        cellPosition == staticGridManager.topLeftSpawnTile
-                        || cellPosition == staticGridManager.topRightSpawnTile
-                        || cellPosition == staticGridManager.bottomLeftSpawnTile
-                        || cellPosition == staticGridManager.bottomRightSpawnTile
+                        cellPosition == StaticGridManager.GetSingleton().topLeftSpawnTile
+                        || cellPosition == StaticGridManager.GetSingleton().topRightSpawnTile
+                        || cellPosition == StaticGridManager.GetSingleton().bottomLeftSpawnTile
+                        || cellPosition == StaticGridManager.GetSingleton().bottomRightSpawnTile
                         || cellPosition == topLeftSpawnTileBottomTile
                         || cellPosition == topLeftSpawnTileRightTile
                         || cellPosition == topRightSpawnTileBottomTile
@@ -100,18 +113,18 @@ public class DynamicGridManager : NetworkBehaviour
 
     public void UpdateTile(GameObject tileGameObject)
     {
-        Vector3Int cellPosition = staticGridManager.nonCollidableGroundTilemap.WorldToCell(tileGameObject.transform.position);
+        Vector3Int cellPosition = StaticGridManager.GetSingleton().nonCollidableGroundTilemap.WorldToCell(tileGameObject.transform.position);
         tileDefs[cellPosition.x, cellPosition.y] = tileGameObject.GetComponent<TileDef>();
     }
 
     public List<GameObject> GetPlayersOnTile(Vector3 position)
     {
         List<GameObject> playersOnTile = new List<GameObject>();
-        Vector3Int cellPosition = staticGridManager.nonCollidableGroundTilemap.WorldToCell(position);
+        Vector3Int cellPosition = StaticGridManager.GetSingleton().nonCollidableGroundTilemap.WorldToCell(position);
 
         foreach (GameObject player in playerGameObjects)
         {
-            Vector3Int playerCellPosition = staticGridManager.nonCollidableGroundTilemap.WorldToCell(player.transform.position);
+            Vector3Int playerCellPosition = StaticGridManager.GetSingleton().nonCollidableGroundTilemap.WorldToCell(player.transform.position);
             if (cellPosition == playerCellPosition)
             {
                 playersOnTile.Add(player);
@@ -137,8 +150,8 @@ public class DynamicGridManager : NetworkBehaviour
 
     public void SpawnExplosions(Player player, Vector3 position)
     {
-        Vector3Int cellPosition = staticGridManager.nonCollidableGroundTilemap.WorldToCell(position);
-        Vector3 cellCenterWorldPosition = staticGridManager.nonCollidableGroundTilemap.GetCellCenterWorld(cellPosition);
+        Vector3Int cellPosition = StaticGridManager.GetSingleton().nonCollidableGroundTilemap.WorldToCell(position);
+        Vector3 cellCenterWorldPosition = StaticGridManager.GetSingleton().nonCollidableGroundTilemap.GetCellCenterWorld(cellPosition);
         networkManager.AddExplosion(position, ExplosionController.Orientation.center);
 
         Vector3Int direction = Vector3Int.left;
@@ -170,7 +183,7 @@ public class DynamicGridManager : NetworkBehaviour
             for (int j = 1; j < player.sizeBombs + 1; ++j)
             {
                 Vector3Int nextCellPosition = cellPosition + direction * j;
-                Vector3 nextCellWorldPosition = staticGridManager.nonCollidableGroundTilemap.GetCellCenterWorld(nextCellPosition);
+                Vector3 nextCellWorldPosition = StaticGridManager.GetSingleton().nonCollidableGroundTilemap.GetCellCenterWorld(nextCellPosition);
                 TileDef nextTileDef = tileDefs[nextCellPosition.x, nextCellPosition.y];
                 if (nextTileDef != null)
                 {
@@ -267,9 +280,9 @@ public class DynamicGridManager : NetworkBehaviour
 
     public void RemoveExplodingBricksTile(GameObject explodingBricksTileGameObject)
     {
-        Vector3Int cellPosition = staticGridManager.nonCollidableGroundTilemap.WorldToCell(explodingBricksTileGameObject.transform.position);
+        Vector3Int cellPosition = StaticGridManager.GetSingleton().nonCollidableGroundTilemap.WorldToCell(explodingBricksTileGameObject.transform.position);
         Vector3Int bottomNextCellPosition = cellPosition + Vector3Int.down;
-        Vector3 bottomNextCellWorldPosition = staticGridManager.nonCollidableGroundTilemap.GetCellCenterWorld(bottomNextCellPosition);
+        Vector3 bottomNextCellWorldPosition = StaticGridManager.GetSingleton().nonCollidableGroundTilemap.GetCellCenterWorld(bottomNextCellPosition);
         TileDef bottomNextTileDef = tileDefs[bottomNextCellPosition.x, bottomNextCellPosition.y];
         if (bottomNextTileDef != null && bottomNextTileDef.tileType == TileDef.TileType.Grass)
         {

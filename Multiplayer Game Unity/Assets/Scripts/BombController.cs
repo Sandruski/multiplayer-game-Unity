@@ -16,17 +16,15 @@ public class BombController : NetworkBehaviour
     private float timer = 0.0f;
 
     private CustomNetworkManager networkManager;
-    private DynamicGridManager dynamicGridManager;
     #endregion
 
     void Start()
     {
         NetworkManager mng = NetworkManager.singleton;
         networkManager = mng.GetComponent<CustomNetworkManager>();
-        dynamicGridManager = GameObject.Find("DynamicGridManager").GetComponent<DynamicGridManager>();
         myCollider = GetComponent<Collider2D>();
 
-        List<GameObject> playersOnTop = dynamicGridManager.GetPlayersOnTile(transform.position);
+        List<GameObject> playersOnTop = DynamicGridManager.GetSingleton().GetPlayersOnTile(transform.position);
         foreach (GameObject playerOnTop in playersOnTop)
         {
             Physics2D.IgnoreCollision(myCollider, playerOnTop.GetComponent<Collider2D>(), true);
@@ -44,7 +42,7 @@ public class BombController : NetworkBehaviour
 
         if (timer >= secondsToExplode)
         {
-            dynamicGridManager.SpawnExplosions(owner, transform.position);
+            DynamicGridManager.GetSingleton().SpawnExplosions(owner, transform.position);
 
             Die();
             Kill();

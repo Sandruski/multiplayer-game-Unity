@@ -25,8 +25,6 @@ public class Player : NetworkBehaviour
     Rigidbody2D rb;
     Animator animator;
     CustomNetworkManager networkManager;
-    StaticGridManager staticGridManager;
-    DynamicGridManager dynamicGridManager;
     #endregion
 
     void Start()
@@ -35,23 +33,20 @@ public class Player : NetworkBehaviour
         animator = gameObject.GetComponent<Animator>();
         animator.SetFloat("Speed", animSpeed);
 
-        staticGridManager = GameObject.Find("StaticGridManager").GetComponent<StaticGridManager>();
-        dynamicGridManager = GameObject.Find("DynamicGridManager").GetComponent<DynamicGridManager>();
-
         NetworkManager mng = NetworkManager.singleton;
         networkManager = mng.GetComponent<CustomNetworkManager>();
 
-        dynamicGridManager.AddPlayer(gameObject);
+        DynamicGridManager.GetSingleton().AddPlayer(gameObject);
 
         if (isServer && isLocalPlayer)
         {
-            dynamicGridManager.GenerateMap();
+            DynamicGridManager.GetSingleton().GenerateMap();
         }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
     }
 
     void OnDestroy()
     {
-        dynamicGridManager.RemovePlayer(gameObject);
+        DynamicGridManager.GetSingleton().RemovePlayer(gameObject);
     }
 
     void Update()
@@ -175,7 +170,7 @@ public class Player : NetworkBehaviour
     [Command]
     void CmdAddBomb()
     {
-        Vector3 bombPosition = staticGridManager.GetCellCenterWorldPosition(transform.position);
+        Vector3 bombPosition = StaticGridManager.GetSingleton().GetCellCenterWorldPosition(transform.position);
         networkManager.AddBomb(bombPosition, this);
     }
 

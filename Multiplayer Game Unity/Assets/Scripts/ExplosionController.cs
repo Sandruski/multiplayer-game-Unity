@@ -13,7 +13,6 @@ public class ExplosionController : NetworkBehaviour
 
     #region Private
     private CustomNetworkManager networkManager;
-    private DynamicGridManager dynamicGridManager;
     private Animator animator;
     #endregion
 
@@ -21,7 +20,6 @@ public class ExplosionController : NetworkBehaviour
     {
         NetworkManager mng = NetworkManager.singleton;
         networkManager = mng.GetComponent<CustomNetworkManager>();
-        dynamicGridManager = GameObject.Find("DynamicGridManager").GetComponent<DynamicGridManager>();
         animator = GetComponent<Animator>();
 
         switch (orientation)
@@ -109,7 +107,7 @@ public class ExplosionController : NetworkBehaviour
 
     public void Die()
     {
-        List<GameObject> playersOnTop = dynamicGridManager.GetPlayersOnTile(transform.position);
+        List<GameObject> playersOnTop = DynamicGridManager.GetSingleton().GetPlayersOnTile(transform.position);
         foreach (GameObject playerOnTop in playersOnTop)
         {
             playerOnTop.GetComponent<Player>().Kill();
