@@ -224,4 +224,16 @@ public class CustomNetworkManager : NetworkManager
             Debug.Log("OnMatchList failed");
         }
     }
+
+    public void StopHost()
+    {
+        StopHost();
+    }
+
+    public void StopClient()
+    {
+        StopClient();
+    }
+
+   
 }

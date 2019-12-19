@@ -66,7 +66,7 @@ public class MenuManager : MonoBehaviour
     public void OnClientButton()
     {
         netManager.networkAddress = ip.text;
-        netManager.networkPort = int.Parse(port.text);
+        //netManager.networkPort = int.Parse(port.text);
         netManager.StartClient();
     }
 
