@@ -5318,6 +5318,12 @@ MonoBehaviour:
   - {fileID: 1363118810040570853, guid: e573ce17c94de9140a698b9669cf2830, type: 3}
   - {fileID: 8620634343784065231, guid: a555e92f015c4a7459e7d2cc11d6b4d4, type: 3}
   - {fileID: 4828306924491643268, guid: f77f4179cf26b7a4bb156acc5304eb73, type: 3}
+  - {fileID: 705456962644407086, guid: 84abfe068c274ab468597f205c96c3e1, type: 3}
+  - {fileID: 1146128249837463035, guid: 9cae41ebc64141a48b7e3c54860b2826, type: 3}
+  - {fileID: 1253451543777026244, guid: 50e50e80659cc5c4b88cf35e6c4735f9, type: 3}
+  - {fileID: 7661349551733453534, guid: c22cf94dfcdaca24d81c4ff900eb5e83, type: 3}
+  - {fileID: 6585547950102743474, guid: f7e247bebef696049af9b1639e62fba5, type: 3}
+  - {fileID: 3599760505529354793, guid: aa2703581515f0041a9705d882b5f21c, type: 3}
   m_CustomConfig: 0
   m_MaxConnections: 4
   m_ConnectionConfig:
@@ -5379,6 +5385,7 @@ MonoBehaviour:
   - Black
   - Red
   - Blue
+  staticGridManager: {fileID: 0}
   menuManager: {fileID: 1351908367}
 --- !u!4 &2105806912
 Transform:
