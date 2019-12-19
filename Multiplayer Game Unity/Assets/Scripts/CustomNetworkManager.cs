@@ -16,13 +16,33 @@ public class MsgTypes
 
 public class CustomNetworkManager : NetworkManager
 {
+    #region Public
     public short playerPrefabIndex;
 
     public string[] playerNames = new string[] { "White", "Black", "Red", "Blue" };
     
-    public enum SpawnPrefabs { WhitePlayer, BlackPlayer, RedPlayer, BluePlayer, Bomb }
+    public enum SpawnPrefabs
+    {
+        WhitePlayer, BlackPlayer, RedPlayer, BluePlayer,
+        Bomb,
+        GrassTile, GrassWithShadowTile,
+        BricksTile, ExplodingBricksTile,
+        ExplosionTile,
+        DynamicGridManager
+    }
 
-    private GridManager gridManager;
+    public StaticGridManager staticGridManager;
+
+    // MatchMaking
+    public MenuManager menuManager;
+    public List<MatchInfoSnapshot> matchList;
+    #endregion
+
+    #region Private
+    // MatchMaking
+    private string newMatchName;
+    private uint maxMatchSize = 4;
+    #endregion
 
     private void OnGUI()
     {
@@ -36,15 +56,9 @@ public class CustomNetworkManager : NetworkManager
         }
     }
 
-    // MatchMaking
-    public MenuManager menuManager;
-    public List<MatchInfoSnapshot> matchList;
-    string newMatchName;
-    uint maxMatchSize = 4;
-
-    private void Start()
+    private void Awake()
     {
-        gridManager = GameObject.Find("GridManager").GetComponent<GridManager>();
+        staticGridManager = GameObject.Find("StaticGridManager").GetComponent<StaticGridManager>();
     }
 
     // 1) Executed in the server
@@ -82,9 +96,8 @@ public class CustomNetworkManager : NetworkManager
     {
         MsgTypes.PlayerPrefabMsg msg = netMsg.ReadMessage<MsgTypes.PlayerPrefabMsg>();
         playerPrefab = spawnPrefabs[msg.prefabIndex];
-        Debug.Log("Prefab index is " + playerPrefabIndex);
         Player.PlayerColor playerColor = (Player.PlayerColor)msg.prefabIndex;
-        Vector3 playerPosition = gridManager.GetPlayerSpawnPosition(playerColor);
+        Vector3 playerPosition = staticGridManager.GetPlayerSpawnPosition(playerColor);
         GameObject player = (GameObject)Instantiate(playerPrefab, playerPosition, Quaternion.identity);
         player.GetComponent<Player>().color = playerColor;
         NetworkServer.AddPlayerForConnection(netMsg.conn, player, msg.controllerId);
@@ -115,17 +128,46 @@ public class CustomNetworkManager : NetworkManager
         NetworkServer.Spawn(newObject);
     }
 
-    public void AddBomb(Vector3 position, Player.PlayerColor playerColor)
+    public void AddBomb(Vector3 position, Player owner)
     {
         GameObject newObject = Instantiate(
             spawnPrefabs[(int)SpawnPrefabs.Bomb],
             position,
             Quaternion.identity);
 
-        BombController bombController = newObject.GetComponent<BombController>();
-        bombController.playerColor = playerColor;
+        newObject.GetComponent<BombController>().owner = owner;
 
         NetworkServer.Spawn(newObject);
+    }
+
+    public void AddExplosion(Vector3 position, ExplosionController.Orientation orientation)
+    {
+        GameObject newObject = Instantiate(
+            spawnPrefabs[(int)SpawnPrefabs.ExplosionTile],
+            position,
+            Quaternion.identity);
+
+        ExplosionController explosionController = newObject.GetComponent<ExplosionController>();
+        explosionController.SetOrientation(orientation);
+
+        NetworkServer.Spawn(newObject);
+    }
+
+    public void AddGridTile(int objIndex, Vector3 position)
+    {
+        GameObject newObject = Instantiate(
+            spawnPrefabs[objIndex],
+            position,
+            Quaternion.identity);
+
+        NetworkServer.Spawn(newObject);
+
+        GameObject.Find("DynamicGridManager").GetComponent<DynamicGridManager>().RpcSyncTile(newObject);
+    }
+
+    public void RemoveObject(GameObject gameObject)
+    {
+        NetworkServer.Destroy(gameObject);
     }
 
     public void OnCreateMatch(string matchName)

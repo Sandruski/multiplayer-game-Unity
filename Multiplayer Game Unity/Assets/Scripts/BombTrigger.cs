@@ -13,6 +13,6 @@ public class BombTrigger : MonoBehaviour
 
     void OnTriggerExit2D(Collider2D collision)
     {
-        Physics2D.IgnoreCollision(bombController.collider2D, collision, false);
+        Physics2D.IgnoreCollision(bombController.myCollider, collision, false);
     }
 }

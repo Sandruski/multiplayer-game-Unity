@@ -1,47 +1,67 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Networking;
 
-public class BombController : MonoBehaviour
+public class BombController : NetworkBehaviour
 {
+    #region Public
     public float secondsToExplode;
     [HideInInspector]
-    public Collider2D collider2D;
-    public Player.PlayerColor playerColor;
+    public Collider2D myCollider;
+    [HideInInspector]
+    public Player owner;
+    #endregion
 
-    private Player owner;
-    private GridManager gridManager;
+    #region Private
     private float timer = 0.0f;
 
-    void Awake()
-    {
-        gridManager = GameObject.Find("GridManager").GetComponent<GridManager>();
-        collider2D = GetComponent<Collider2D>();
-        owner = gridManager.GetPlayer(playerColor);
+    private CustomNetworkManager networkManager;
+    private DynamicGridManager dynamicGridManager;
+    #endregion
 
-        List<GameObject> playersOnTop = gridManager.GetPlayersOnTile(transform.position);
+    void Start()
+    {
+        NetworkManager mng = NetworkManager.singleton;
+        networkManager = mng.GetComponent<CustomNetworkManager>();
+
+        dynamicGridManager = GameObject.Find("DynamicGridManager").GetComponent<DynamicGridManager>();
+        myCollider = GetComponent<Collider2D>();
+
+        List<GameObject> playersOnTop = dynamicGridManager.GetPlayersOnTile(transform.position);
         foreach (GameObject playerOnTop in playersOnTop)
         {
-            Physics2D.IgnoreCollision(collider2D, playerOnTop.GetComponent<Collider2D>(), true);
+            Physics2D.IgnoreCollision(myCollider, playerOnTop.GetComponent<Collider2D>(), true);
         }
-        
-        owner.concurrentBombs += 1;
     }
 
     void Update()
     {
-        timer += Time.deltaTime;
-
-        if (timer >= secondsToExplode)
+        if (owner == null)
         {
-            Die();
-            Destroy(gameObject);
+            return;
+        }
+
+        if (isServer)
+        {
+            timer += Time.deltaTime;
+
+            if (timer >= secondsToExplode)
+            {
+                dynamicGridManager.SpawnExplosions(owner, transform.position);
+
+                Die();
+                Kill();
+            }
         }
     }
 
     void Die()
     {
-        gridManager.SpawnExplosions(owner, transform.position);
-        
-        owner.concurrentBombs -= 1;
+        owner.RemoveConcurrentBombs(1);
+    }
+
+    public void Kill()
+    {
+        networkManager.RemoveObject(gameObject);
     }
 }

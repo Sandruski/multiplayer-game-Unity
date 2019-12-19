@@ -22,35 +22,36 @@ public class Player : NetworkBehaviour
     #endregion
 
     #region NoInspector
-    [HideInInspector]
-    public uint concurrentBombs = 0u;
     Rigidbody2D rb;
     Animator animator;
     CustomNetworkManager networkManager;
-    GridManager gridManager;
+    StaticGridManager staticGridManager;
+    DynamicGridManager dynamicGridManager;
     #endregion
 
-    void Awake()
+    void Start()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
         animator = gameObject.GetComponent<Animator>();
         animator.SetFloat("Speed", animSpeed);
 
-        gridManager = GameObject.Find("GridManager").GetComponent<GridManager>();
-        gridManager.AddPlayer(gameObject);
+        staticGridManager = GameObject.Find("StaticGridManager").GetComponent<StaticGridManager>();
+        dynamicGridManager = GameObject.Find("DynamicGridManager").GetComponent<DynamicGridManager>();
 
         NetworkManager mng = NetworkManager.singleton;
         networkManager = mng.GetComponent<CustomNetworkManager>();
+
+        dynamicGridManager.AddPlayer(gameObject);
+
+        if (isServer && isLocalPlayer)
+        {
+            dynamicGridManager.GenerateMap();
+        }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
     }
 
     void OnDestroy()
     {
-        GameObject gridManagerGameObject = GameObject.Find("GridManager");
-        if (gridManagerGameObject != null)
-        {
-            GridManager gridManager = gridManagerGameObject.GetComponent<GridManager>();
-            gridManager.RemovePlayer(gameObject);
-        }
+        dynamicGridManager.RemovePlayer(gameObject);
     }
 
     void Update()
@@ -75,7 +76,7 @@ public class Player : NetworkBehaviour
             {
                 if (concurrentBombs < maxConcurrentBombs)
                 {
-                    CmdAddBomb();
+                    AddBomb();
                 }
             }
         }
@@ -115,6 +116,8 @@ public class Player : NetworkBehaviour
 
     public void Kill()
     {
+        isDead = true;
+
         Destroy(gameObject);
     }
 
@@ -170,10 +173,63 @@ public class Player : NetworkBehaviour
         CmdSetAnimation(up, down, left, right);
     }
 
+    // Bombs sync
     [Command]
     void CmdAddBomb()
     {
-        Vector3 bombPosition = gridManager.GetCellCenterPosition(transform.position);
-        networkManager.AddBomb(bombPosition, color);
+        Vector3 bombPosition = staticGridManager.GetCellCenterWorldPosition(transform.position);
+        networkManager.AddBomb(bombPosition, this);
+    }
+
+    void AddBomb()
+    {
+        CmdAddConcurrentBombs(1);
+        CmdAddBomb();
+    }
+
+    // Concurrent bombs sync
+    [SyncVar(hook = "OnConcurrentBombsChanged")]
+    uint concurrentBombs;
+
+    [Command]
+    void CmdAddConcurrentBombs(uint concurrentBombs)
+    {
+        this.concurrentBombs += concurrentBombs;
+    }
+
+    [Command]
+    void CmdRemoveConcurrentBombs(uint concurrentBombs)
+    {
+        this.concurrentBombs -= concurrentBombs;
+    }
+
+    void OnConcurrentBombsChanged(uint concurrentBombs)
+    {
+        this.concurrentBombs = concurrentBombs;
+        Debug.Log("Concurrent bombs" + concurrentBombs);
+    }
+
+    public void AddConcurrentBombs(uint concurrentBombs)
+    {
+        CmdAddConcurrentBombs(concurrentBombs);
+    }
+
+    public void RemoveConcurrentBombs(uint concurrentBombs)
+    {
+        CmdRemoveConcurrentBombs(concurrentBombs);
+    }
+
+    // Dead sync
+    [SyncVar(hook = "OnDeadSet")]
+    bool isDead;
+    
+    void OnDeadSet(bool isDead)
+    {
+        this.isDead = isDead;
+
+        if (isDead)
+        {
+            Kill();
+        }
     }
 }

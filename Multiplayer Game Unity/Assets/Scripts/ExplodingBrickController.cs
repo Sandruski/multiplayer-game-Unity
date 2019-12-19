@@ -1,42 +1,34 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class ExplodingBrickController : MonoBehaviour
+public class ExplodingBrickController : NetworkBehaviour
 {
-    [HideInInspector]
-    public bool isAlive;
-
+    #region Private
     Animator animator;
+    CustomNetworkManager networkManager;
+    #endregion
 
     void Awake()
     {
-        isAlive = false;
         animator = GetComponent<Animator>();
+
+        NetworkManager mng = NetworkManager.singleton;
+        networkManager = mng.GetComponent<CustomNetworkManager>();
     }
 
     void Update()
     {
-        if (isAlive)
+        if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f
+            && isServer)
         {
-            if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
-            {
-                Despawn();
-            }
+            Kill();
         }
     }
 
-    public void Spawn(Vector3 position)
+    public void Kill()
     {
-        transform.position = position;
-
-        isAlive = true;
-        gameObject.SetActive(true);
-    }
-
-    public void Despawn()
-    {
-        isAlive = false;
-        gameObject.SetActive(false);
+        networkManager.RemoveObject(gameObject);
     }
 }
