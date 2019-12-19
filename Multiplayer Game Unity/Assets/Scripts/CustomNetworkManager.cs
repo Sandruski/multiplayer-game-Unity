@@ -149,7 +149,7 @@ public class CustomNetworkManager : NetworkManager
             Quaternion.identity);
 
         ExplosionController explosionController = newObject.GetComponent<ExplosionController>();
-        explosionController.SetOrientation(orientation);
+        explosionController.orientation = orientation;
 
         NetworkServer.Spawn(newObject);
     }
@@ -163,7 +163,7 @@ public class CustomNetworkManager : NetworkManager
 
         NetworkServer.Spawn(newObject);
 
-        GameObject.Find("DynamicGridManager").GetComponent<DynamicGridManager>().RpcSyncTile(newObject);
+        //GameObject.Find("DynamicGridManager").GetComponent<DynamicGridManager>().RpcSyncTile(newObject);
     }
 
     public void RemoveObject(GameObject gameObject)

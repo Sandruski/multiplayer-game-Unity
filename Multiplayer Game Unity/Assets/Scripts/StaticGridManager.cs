@@ -46,19 +46,29 @@ public class StaticGridManager : MonoBehaviour
         switch (playerColor)
         {
             case Player.PlayerColor.white:
-                cellPosition = topLeftSpawnTile;
-                break;
+                {
+                    cellPosition = topLeftSpawnTile;
+                    break;
+                }
             case Player.PlayerColor.black:
-                cellPosition = bottomRightSpawnTile;
-                break;
+                {
+                    cellPosition = bottomRightSpawnTile;
+                    break;
+                }
             case Player.PlayerColor.red:
-                cellPosition = bottomLeftSpawnTile;
-                break;
+                {
+                    cellPosition = bottomLeftSpawnTile;
+                    break;
+                }
             case Player.PlayerColor.blue:
-                cellPosition = topRightSpawnTile;
-                break;
+                {
+                    cellPosition = topRightSpawnTile;
+                    break;
+                }
             default:
-                break;
+                {
+                    break;
+                }
         }
 
         return nonCollidableGroundTilemap.GetCellCenterWorld(cellPosition);

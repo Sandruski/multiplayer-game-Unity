@@ -6,29 +6,29 @@ using UnityEngine.Networking;
 public class ExplodingBrickController : NetworkBehaviour
 {
     #region Private
-    Animator animator;
-    CustomNetworkManager networkManager;
+    private CustomNetworkManager networkManager;
+    private DynamicGridManager dynamicGridManager;
+    private Animator animator;
     #endregion
 
-    void Awake()
+    void Start()
     {
-        animator = GetComponent<Animator>();
-
         NetworkManager mng = NetworkManager.singleton;
         networkManager = mng.GetComponent<CustomNetworkManager>();
+        dynamicGridManager = GameObject.Find("DynamicGridManager").GetComponent<DynamicGridManager>();
+        animator = GetComponent<Animator>();
     }
 
     void Update()
     {
-        if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f
-            && isServer)
+        if (!isServer)
         {
-            Kill();
+            return;
         }
-    }
 
-    public void Kill()
-    {
-        networkManager.RemoveObject(gameObject);
+        if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
+        {
+            dynamicGridManager.RemoveExplodingBricksTile(gameObject);
+        }
     }
 }

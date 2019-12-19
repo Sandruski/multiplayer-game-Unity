@@ -116,9 +116,7 @@ public class Player : NetworkBehaviour
 
     public void Kill()
     {
-        isDead = true;
-
-        Destroy(gameObject);
+        networkManager.RemoveObject(gameObject);
     }
 
     // Animation sync
@@ -206,7 +204,6 @@ public class Player : NetworkBehaviour
     void OnConcurrentBombsChanged(uint concurrentBombs)
     {
         this.concurrentBombs = concurrentBombs;
-        Debug.Log("Concurrent bombs" + concurrentBombs);
     }
 
     public void AddConcurrentBombs(uint concurrentBombs)
@@ -217,19 +214,5 @@ public class Player : NetworkBehaviour
     public void RemoveConcurrentBombs(uint concurrentBombs)
     {
         CmdRemoveConcurrentBombs(concurrentBombs);
-    }
-
-    // Dead sync
-    [SyncVar(hook = "OnDeadSet")]
-    bool isDead;
-    
-    void OnDeadSet(bool isDead)
-    {
-        this.isDead = isDead;
-
-        if (isDead)
-        {
-            Kill();
-        }
     }
 }

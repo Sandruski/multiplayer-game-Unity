@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class BombTrigger : MonoBehaviour
 {
-    BombController bombController;
+    #region Private
+    private BombController bombController;
+    #endregion
 
-    void Awake()
+    void Start()
     {
         bombController = GetComponentInParent<BombController>();
     }

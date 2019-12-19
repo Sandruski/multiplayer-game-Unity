@@ -23,7 +23,6 @@ public class BombController : NetworkBehaviour
     {
         NetworkManager mng = NetworkManager.singleton;
         networkManager = mng.GetComponent<CustomNetworkManager>();
-
         dynamicGridManager = GameObject.Find("DynamicGridManager").GetComponent<DynamicGridManager>();
         myCollider = GetComponent<Collider2D>();
 
@@ -36,22 +35,19 @@ public class BombController : NetworkBehaviour
 
     void Update()
     {
-        if (owner == null)
+        if (!isServer)
         {
             return;
         }
 
-        if (isServer)
+        timer += Time.deltaTime;
+
+        if (timer >= secondsToExplode)
         {
-            timer += Time.deltaTime;
+            dynamicGridManager.SpawnExplosions(owner, transform.position);
 
-            if (timer >= secondsToExplode)
-            {
-                dynamicGridManager.SpawnExplosions(owner, transform.position);
-
-                Die();
-                Kill();
-            }
+            Die();
+            Kill();
         }
     }
 

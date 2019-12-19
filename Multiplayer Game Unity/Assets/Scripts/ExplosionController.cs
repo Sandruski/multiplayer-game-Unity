@@ -7,35 +7,23 @@ public class ExplosionController : NetworkBehaviour
 {
     #region Public
     public enum Orientation { center, top, bottom, left, right, vertical, horizontal };
+    [SyncVar]
     public Orientation orientation = Orientation.center;
     #endregion
 
     #region Private
+    private CustomNetworkManager networkManager;
     private DynamicGridManager dynamicGridManager;
     private Animator animator;
     #endregion
 
-    void Awake()
+    void Start()
     {
+        NetworkManager mng = NetworkManager.singleton;
+        networkManager = mng.GetComponent<CustomNetworkManager>();
         dynamicGridManager = GameObject.Find("DynamicGridManager").GetComponent<DynamicGridManager>();
         animator = GetComponent<Animator>();
-    }
 
-    void Update()
-    {
-        if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
-        {
-            if (isServer)
-            {
-                Die();
-            }
-
-            Kill();
-        }
-    }
-
-    public void SetOrientation(Orientation orientation)
-    {
         switch (orientation)
         {
             case Orientation.top:
@@ -105,6 +93,20 @@ public class ExplosionController : NetworkBehaviour
         }
     }
 
+    void Update()
+    {
+        if (!isServer)
+        {
+            return;
+        }
+
+        if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
+        {
+            Die();
+            Kill();
+        }
+    }
+
     public void Die()
     {
         List<GameObject> playersOnTop = dynamicGridManager.GetPlayersOnTile(transform.position);
@@ -116,6 +118,6 @@ public class ExplosionController : NetworkBehaviour
 
     public void Kill()
     {
-        Destroy(gameObject);
+        networkManager.RemoveObject(gameObject);
     }
 }
