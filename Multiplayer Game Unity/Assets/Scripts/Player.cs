@@ -72,6 +72,11 @@ public class Player : NetworkBehaviour
                 if (Input.GetKeyDown("right")) { auxRight = true; }
                 else if (Input.GetKeyUp("right")) { auxRight = false; }
 
+                animator.SetBool("Up", auxUp);
+                animator.SetBool("Down", auxDown);
+                animator.SetBool("Left", auxLeft);
+                animator.SetBool("Right", auxRight);
+
                 SetAnimation();
 
                 if (Input.GetKeyDown("space"))
