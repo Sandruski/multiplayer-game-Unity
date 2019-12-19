@@ -28,6 +28,11 @@ public class MenuManager : MonoBehaviour
         dropdownCharacter.RefreshShownValue();
     }
 
+    public void OnQuit()
+    {
+        Application.Quit();
+    }
+
     public void OnCharacterDropdown()
     {
         netManager.playerPrefabIndex = (short)dropdownCharacter.value;
