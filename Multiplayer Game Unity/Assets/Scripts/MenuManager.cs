@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking.Match;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
 public class MenuManager : MonoBehaviour
 {
@@ -11,13 +12,17 @@ public class MenuManager : MonoBehaviour
 
     public Dropdown dropdownMatches;
     public InputField roomName;
-    public CustomNetworkManager netManager;
 
     public InputField ip;
     public InputField port;
 
+    private CustomNetworkManager netManager;
+
     void Start()
     {
+        NetworkManager mng = NetworkManager.singleton;
+        netManager = mng.GetComponent<CustomNetworkManager>();
+
         netManager.RequestMatches();
 
         foreach (string player in netManager.playerNames)
