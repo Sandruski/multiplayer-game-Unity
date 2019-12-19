@@ -92,6 +92,7 @@ public class MenuManager : MonoBehaviour
         {
             dropdownMatches.options.Add(new Dropdown.OptionData() { text = match.name });
         }
+        dropdownMatches.RefreshShownValue();
     }
 
     public void OnJoinButton()
