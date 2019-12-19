@@ -25,6 +25,7 @@ public class Player : NetworkBehaviour
     Rigidbody2D rb;
     Animator animator;
     CustomNetworkManager networkManager;
+    bool auxUp, auxDown, auxLeft, auxRight;
     #endregion
 
     void Start()
@@ -59,17 +60,17 @@ public class Player : NetworkBehaviour
         {
             if (isLocalPlayer)
             {
-                if (Input.GetKeyDown("up")) { up = true; }
-                else if (Input.GetKeyUp("up")) { up = false; }
+                if (Input.GetKeyDown("up")) { auxUp = true; }
+                else if (Input.GetKeyUp("up")) { auxUp = false; }
 
-                if (Input.GetKeyDown("down")) { down = true; }
-                else if (Input.GetKeyUp("down")) { down = false; }
+                if (Input.GetKeyDown("down")) { auxDown = true; }
+                else if (Input.GetKeyUp("down")) { auxDown = false; }
 
-                if (Input.GetKeyDown("left")) { left = true; }
-                else if (Input.GetKeyUp("left")) { left = false; }
+                if (Input.GetKeyDown("left")) { auxLeft = true; }
+                else if (Input.GetKeyUp("left")) { auxLeft = false; }
 
-                if (Input.GetKeyDown("right")) { right = true; }
-                else if (Input.GetKeyUp("right")) { right = false; }
+                if (Input.GetKeyDown("right")) { auxRight = true; }
+                else if (Input.GetKeyUp("right")) { auxRight = false; }
 
                 SetAnimation();
 
@@ -123,11 +124,6 @@ public class Player : NetworkBehaviour
         concurrentBombs += amount;
     }
 
-    void IncreaseSpeed(uint amount)
-    {
-        speed += amount;
-    }
-
     public void Kill()
     {
         networkManager.RemoveObject(gameObject);
@@ -178,11 +174,7 @@ public class Player : NetworkBehaviour
 
     void SetAnimation()
     {
-        OnUp(up);
-        OnDown(down);
-        OnLeft(left);
-        OnRight(right);
-        CmdSetAnimation(up, down, left, right);
+        CmdSetAnimation(auxUp, auxDown, auxLeft, auxRight);
     }
 
     // Bombs sync
