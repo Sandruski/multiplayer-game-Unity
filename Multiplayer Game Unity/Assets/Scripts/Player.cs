@@ -46,7 +46,11 @@ public class Player : NetworkBehaviour
 
     void OnDestroy()
     {
-        DynamicGridManager.GetSingleton().RemovePlayer(gameObject);
+        DynamicGridManager dynamicGridManager = DynamicGridManager.GetSingleton();
+        if (dynamicGridManager != null)
+        {
+            dynamicGridManager.RemovePlayer(gameObject);
+        }
     }
 
     void Update()
