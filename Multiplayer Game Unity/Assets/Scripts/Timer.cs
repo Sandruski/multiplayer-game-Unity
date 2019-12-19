@@ -8,7 +8,7 @@ public class Timer : NetworkBehaviour
 {
     #region Private
     [SyncVar(hook = "OnTimerUpdated")]
-    private float timer = 15.0f;
+    private float timer = 120.0f;
 
     private Text text;
     private NetworkManager networkManager;
