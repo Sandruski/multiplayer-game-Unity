@@ -43,18 +43,6 @@ public class CustomNetworkManager : NetworkManager
     private uint maxMatchSize = 4;
     #endregion
 
-    private void OnGUI()
-    {
-        if (!isNetworkActive)
-        {
-            playerPrefabIndex = (short)GUI.SelectionGrid(
-                new Rect(Screen.width - 200, 10, 200, 50),
-                playerPrefabIndex,
-                playerNames,
-                3);
-        }
-    }
-
     // 1) Executed in the server
     public override void OnStartServer()
     {
