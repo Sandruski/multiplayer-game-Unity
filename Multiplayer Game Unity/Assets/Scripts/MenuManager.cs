@@ -26,6 +26,9 @@ public class MenuManager : MonoBehaviour
         }
         dropdownCharacter.value = 0;
         dropdownCharacter.RefreshShownValue();
+
+        ip.text = "localhost";
+        port.text = "7777";
     }
 
     public void OnQuit()
@@ -60,13 +63,14 @@ public class MenuManager : MonoBehaviour
     // Lan
     public void OnHostButton()
     {
+        netManager.networkPort = int.Parse(port.text);
         netManager.StartHost();
     }
 
     public void OnClientButton()
     {
         netManager.networkAddress = ip.text;
-        //netManager.networkPort = int.Parse(port.text);
+        netManager.networkPort = int.Parse(port.text);
         netManager.StartClient();
     }
 
