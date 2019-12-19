@@ -109,6 +109,12 @@ public class DynamicGridManager : NetworkBehaviour
     public void RemovePlayer(GameObject playerGameObject)
     {
         playerGameObjects.Remove(playerGameObject);
+
+        if (playerGameObjects.Count == 0
+            && isServer)
+        {
+            networkManager.StopHost();
+        }
     }
 
     public void UpdateTile(GameObject tileGameObject)

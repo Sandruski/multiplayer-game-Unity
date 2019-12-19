@@ -234,6 +234,4 @@ public class CustomNetworkManager : NetworkManager
     {
         StopClient();
     }
-
-   
 }

@@ -6,14 +6,19 @@ using UnityEngine.UI;
 
 public class Timer : NetworkBehaviour
 {
+    #region Private
     [SyncVar(hook = "OnTimerUpdated")]
     private float timer = 120.0f;
 
     private Text text;
+    private NetworkManager networkManager;
+    #endregion
 
     void Start()
     {
-        text = GetComponent<Text>();   
+        text = GetComponent<Text>();
+        NetworkManager mng = NetworkManager.singleton;
+        networkManager = mng.GetComponent<CustomNetworkManager>();
     }
 
     void Update()
@@ -24,6 +29,11 @@ public class Timer : NetworkBehaviour
         }
 
         timer -= Time.deltaTime;
+        if (timer <= 0.0f)
+        {
+            timer = 0.0f;
+            networkManager.StopHost();
+        }
     }
 
     void OnTimerUpdated(float timer)
