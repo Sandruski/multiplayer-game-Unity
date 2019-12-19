@@ -110,7 +110,7 @@ public class DynamicGridManager : NetworkBehaviour
     {
         playerGameObjects.Remove(playerGameObject);
 
-        if (playerGameObjects.Count == 0
+        if (playerGameObjects.Count == 1
             && isServer)
         {
             networkManager.StopHost();
