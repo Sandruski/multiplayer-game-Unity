@@ -761,7 +761,7 @@ Camera:
   m_GameObject: {fileID: 286220515}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 2
+  m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -778,7 +778,7 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 1
+  orthographic: 0
   orthographic size: 5
   m_Depth: -1
   m_CullingMask:
@@ -890,7 +890,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 364936691}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1351908367}
+        m_MethodName: OnHostButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &364936691
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1505,7 +1516,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 549161485}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1351908367}
+        m_MethodName: OnHostButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &549161485
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2552,7 +2574,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Online
+  m_Text: Matchmaking
 --- !u!222 &832186669
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3871,6 +3893,8 @@ MonoBehaviour:
   dropdownMatches: {fileID: 700346522}
   roomName: {fileID: 1361214008}
   netManager: {fileID: 2105806911}
+  ip: {fileID: 420564186}
+  port: {fileID: 1902410003}
 --- !u!1 &1360998994
 GameObject:
   m_ObjectHideFlags: 0
@@ -4691,9 +4715,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Lan
-
-'
+  m_Text: Custom
 --- !u!222 &1813661451
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5280,6 +5302,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2105806912}
   - component: {fileID: 2105806911}
+  - component: {fileID: 2105806913}
   m_Layer: 0
   m_Name: GameState
   m_TagString: Untagged
@@ -5385,7 +5408,6 @@ MonoBehaviour:
   - Black
   - Red
   - Blue
-  staticGridManager: {fileID: 0}
   menuManager: {fileID: 1351908367}
 --- !u!4 &2105806912
 Transform:
@@ -5401,6 +5423,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2105806913
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2105806910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4394a3eef724546f896557197e2d6c44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  manager: {fileID: 0}
+  showGUI: 1
+  offsetX: 0
+  offsetY: 0
 --- !u!1 &2124081603
 GameObject:
   m_ObjectHideFlags: 0

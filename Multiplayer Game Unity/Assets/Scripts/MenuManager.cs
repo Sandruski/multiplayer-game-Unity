@@ -13,6 +13,9 @@ public class MenuManager : MonoBehaviour
     public InputField roomName;
     public CustomNetworkManager netManager;
 
+    public InputField ip;
+    public InputField port;
+
     void Start()
     {
         netManager.RequestMatches();
@@ -52,12 +55,14 @@ public class MenuManager : MonoBehaviour
     // Lan
     public void OnHostButton()
     {
-        netManager.OnStartServer();
+        netManager.StartHost();
     }
 
     public void OnClientButton()
     {
-
+        netManager.networkAddress = ip.text;
+        netManager.networkPort = int.Parse(port.text);
+        netManager.StartClient();
     }
 
     // Online
