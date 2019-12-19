@@ -51,28 +51,43 @@ public class Player : NetworkBehaviour
 
     void Update()
     {
-        if (isLocalPlayer)
+        if (!isDead)
         {
-            if (Input.GetKeyDown("up")) { up = true; }
-            else if (Input.GetKeyUp("up")) { up = false; }
-
-            if (Input.GetKeyDown("down")) { down = true; }
-            else if (Input.GetKeyUp("down")) { down = false; }
-
-            if (Input.GetKeyDown("left")) { left = true; }
-            else if (Input.GetKeyUp("left")) { left = false; }
-
-            if (Input.GetKeyDown("right")) { right = true; }
-            else if (Input.GetKeyUp("right")) { right = false; }
-
-            SetAnimation();
-
-            if (Input.GetKeyDown("space"))
+            if (isLocalPlayer)
             {
-                if (concurrentBombs < maxConcurrentBombs)
+                if (Input.GetKeyDown("up")) { up = true; }
+                else if (Input.GetKeyUp("up")) { up = false; }
+
+                if (Input.GetKeyDown("down")) { down = true; }
+                else if (Input.GetKeyUp("down")) { down = false; }
+
+                if (Input.GetKeyDown("left")) { left = true; }
+                else if (Input.GetKeyUp("left")) { left = false; }
+
+                if (Input.GetKeyDown("right")) { right = true; }
+                else if (Input.GetKeyUp("right")) { right = false; }
+
+                SetAnimation();
+
+                if (Input.GetKeyDown("space"))
                 {
-                    AddBomb();
+                    if (concurrentBombs < maxConcurrentBombs)
+                    {
+                        AddBomb();
+                    }
                 }
+            }
+        }
+        else
+        {
+            if (!isServer)
+            {
+                return;
+            }
+
+            if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
+            {
+                Kill();
             }
         }
     }
@@ -209,5 +224,27 @@ public class Player : NetworkBehaviour
     public void RemoveConcurrentBombs(uint concurrentBombs)
     {
         CmdRemoveConcurrentBombs(concurrentBombs);
+    }
+
+    // Dead sync
+    [SyncVar(hook = "OnIsDeadChanged")]
+    bool isDead;
+
+    [Command]
+    void CmdSetIsDead(bool isDead)
+    {
+        this.isDead = isDead;
+    }
+
+    void OnIsDeadChanged(bool isDead)
+    {
+        this.isDead = isDead;
+
+        animator.SetBool("Explode", true);
+    }
+
+    public void SetIsDead(bool isDead)
+    {
+        CmdSetIsDead(isDead);
     }
 }

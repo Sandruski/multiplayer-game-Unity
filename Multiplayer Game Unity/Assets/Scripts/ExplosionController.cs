@@ -110,7 +110,7 @@ public class ExplosionController : NetworkBehaviour
         List<GameObject> playersOnTop = DynamicGridManager.GetSingleton().GetPlayersOnTile(transform.position);
         foreach (GameObject playerOnTop in playersOnTop)
         {
-            playerOnTop.GetComponent<Player>().Kill();
+            playerOnTop.GetComponent<Player>().SetIsDead(true);
         }
     }
 
