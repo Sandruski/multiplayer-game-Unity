@@ -110,10 +110,41 @@ public class DynamicGridManager : NetworkBehaviour
     {
         playerGameObjects.Remove(playerGameObject);
 
-        if ((playerGameObjects.Count == 0 || playerGameObjects.Count == 1)
-            && isServer)
+        if (isServer)
         {
-            networkManager.StopHost();
+            if (playerGameObjects.Count == 0)
+            {
+                GameObject.Find("Winner").GetComponent<WinnerText>().winner = "YOU WIN";
+                GameObject.Find("Countdown").GetComponent<Timer>().isStopped = true;
+            }
+            else if (playerGameObjects.Count == 1)
+            {
+                switch (playerGameObjects[0].GetComponent<Player>().color)
+                {
+                    case Player.PlayerColor.white:
+                        {
+                            GameObject.Find("Winner").GetComponent<WinnerText>().winner = "WHITE WINS";
+                            break;
+                        }
+                    case Player.PlayerColor.black:
+                        {
+                            GameObject.Find("Winner").GetComponent<WinnerText>().winner = "BLACK WINS";
+                            break;
+                        }
+                    case Player.PlayerColor.red:
+                        {
+                            GameObject.Find("Winner").GetComponent<WinnerText>().winner = "RED WINS";
+                            break;
+                        }
+                    case Player.PlayerColor.blue:
+                        {
+                            GameObject.Find("Winner").GetComponent<WinnerText>().winner = "BLUE WINS";
+                            break;
+                        }
+                }
+
+                GameObject.Find("Countdown").GetComponent<Timer>().isStopped = true;
+            }
         }
     }
 
