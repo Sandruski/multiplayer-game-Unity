@@ -119,10 +119,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13f0720e651af864496ff5a4733ddafd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: 0
+  color: 2
   maxBombs: 1
   maxConcurrentBombs: 1
-  sizeBombs: 1
+  sizeBombs: 2
   speed: 1
   animSpeed: 0.25
 --- !u!50 &8620634343784065268

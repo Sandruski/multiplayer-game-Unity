@@ -4,19 +4,19 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
-public class Timer : NetworkBehaviour
+public class WinnerText : NetworkBehaviour
 {
     #region Public
-    [SyncVar]
-    public bool isStopped = false;
+    [SyncVar(hook = "OnWinnerSet")]
+    public string winner;
+    public float seconds;
     #endregion
 
     #region Private
-    [SyncVar(hook = "OnTimerUpdated")]
-    private float timer = 120.0f;
-
     private Text text;
     private CustomNetworkManager networkManager;
+
+    private float timer = 0.0f;
     #endregion
 
     void Start()
@@ -33,25 +33,23 @@ public class Timer : NetworkBehaviour
             return;
         }
 
-        if (!isStopped)
+        if (winner != "")
         {
-            timer -= Time.deltaTime;
-            if (timer <= 0.0f)
+            timer += Time.deltaTime;
+            if (timer >= seconds)
             {
-                timer = 0.0f;
                 networkManager.StopHost();
             }
         }
     }
 
-    void OnTimerUpdated(float timer)
+    void OnWinnerSet(string winner)
     {
-        this.timer = timer;
+        this.winner = winner;
 
         if (text != null)
         {
-            int time = (int)this.timer;
-            text.text = time.ToString();
+            text.text = winner;
         }
     }
 }

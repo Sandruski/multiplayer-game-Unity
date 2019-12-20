@@ -122,7 +122,7 @@ MonoBehaviour:
   color: 3
   maxBombs: 1
   maxConcurrentBombs: 1
-  sizeBombs: 1
+  sizeBombs: 2
   speed: 1
   animSpeed: 0.25
 --- !u!50 &4828306924491643265
