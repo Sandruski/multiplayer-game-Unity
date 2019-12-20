@@ -49,8 +49,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   secondsToExplode: 2.5
-  isAlive: 0
-  collider2D: {fileID: 0}
+  myCollider: {fileID: 0}
+  owner: {fileID: 0}
 --- !u!95 &442679762335076108
 Animator:
   serializedVersion: 3
@@ -108,7 +108,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 2
   m_Sprite: {fileID: 8938118789230497700, guid: dcde466042bb8e84ebfe13886fd92e2e,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
