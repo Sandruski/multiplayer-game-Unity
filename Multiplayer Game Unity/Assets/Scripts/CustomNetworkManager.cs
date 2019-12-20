@@ -143,8 +143,6 @@ public class CustomNetworkManager : NetworkManager
             Quaternion.identity);
 
         NetworkServer.Spawn(newObject);
-
-        //GameObject.Find("DynamicGridManager").GetComponent<DynamicGridManager>().RpcSyncTile(newObject);
     }
 
     public void RemoveObject(GameObject gameObject)

@@ -110,7 +110,7 @@ public class DynamicGridManager : NetworkBehaviour
     {
         playerGameObjects.Remove(playerGameObject);
 
-        if (playerGameObjects.Count == 1
+        if ((playerGameObjects.Count == 0 || playerGameObjects.Count == 1)
             && isServer)
         {
             networkManager.StopHost();
@@ -298,14 +298,5 @@ public class DynamicGridManager : NetworkBehaviour
 
         networkManager.RemoveObject(explodingBricksTileGameObject);
     }
-
-    /*
-    [ClientRpc]
-    public void RpcSyncTile(GameObject gameObject)
-    {
-        Vector3Int cellPosition = staticGridManager.nonCollidableGroundTilemap.WorldToCell(gameObject.transform.position);
-        tileDefs[cellPosition.x, cellPosition.y] = gameObject.GetComponent<TileDef>();
-    }
-    */
 }
 
